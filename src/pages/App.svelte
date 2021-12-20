@@ -1,7 +1,8 @@
 <script>
-    import SignUp from "./SignUp.svelte";
     import { user } from "../stores/sessionStore";
     import { supabase } from "../business/supabaseClient";
+    import { logOut } from "../business/auth";
+    import SignUp from "./SignUp.svelte";
     import Home from "./Home.svelte";
     import LogIn from "./LogIn.svelte";
 
@@ -10,12 +11,25 @@
     user.set(supabase.auth.user());
 
     supabase.auth.onAuthStateChange((_, session) => {
-        user.set(session.user);
+        if (session)
+            user.set(session.user);
+        else
+            user.set(null);
     });
+
+    async function onLogOut() {
+        const { error } = logOut();
+
+        if (error)
+            console.log(error)
+    }
 </script>
 
-<header class="header">
-    <h1 class="app-title">Reciply</h1>
+<header class="header" class:header--small={$user}>
+    <h1 class="header__title">Reciply</h1>
+    {#if $user}
+        <i class="fas fa-sign-out-alt logout" on:click={onLogOut}></i>
+    {/if}
 </header>
 <main>
     {#if $user}
@@ -36,7 +50,7 @@
 <style lang="scss">
 	@import "../css/bootstrap";
 
-	* {
+	*:not(i) {
 		font-family: $font-primary;
 	}
 
@@ -51,15 +65,29 @@
 
         box-sizing: border-box;
         height: 190px;
-        padding-bottom: 30px;
-    }
+        padding: 0 1rem 30px 1rem;
+        transition: height .25s linear;
 
-    .app-title {
-        color: $color-white;
-        font-size: 4.5rem;
+        &__title {
+            color: $color-white;
+            font-size: 4.5rem;
+            font-family: $font-title !important;
+            transition: font-size .25s linear;
+        }
 
-        :global(&) {
-            font-family: $font-title;
+        &--small {
+            @include flex($align: center, $justify: space-between);
+
+            height: 90px;
+
+            .header__title {
+                font-size: 1.5rem;
+            }
+        }
+
+        .logout {
+            color: $color-white;
+            font-size: 1.5rem;
         }
     }
 

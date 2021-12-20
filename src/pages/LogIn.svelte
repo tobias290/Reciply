@@ -1,5 +1,5 @@
 <script>
-    import { createEventDispatcher } from 'svelte';
+    import { createEventDispatcher } from "svelte";
     import { logIn } from "../business/auth";
     import { user as userStore, session as sessionStore } from "../stores/sessionStore";
 
