@@ -1,5 +1,9 @@
 <script>
+    import { minutesToFormattedTime } from "../helpers/time";
+
     export let recipe;
+
+    let { hours, minutes } = minutesToFormattedTime(recipe.cook_time + recipe.prep_time);
 </script>
 
 <div class="recipe">
@@ -8,13 +12,17 @@
         <div class="recipe__info">
             <h2>{recipe.name}</h2>
             <div>
-                <strong>1</strong>
-                <span>hr</span>
-                <strong>30</strong>
-                <span>mins</span>
+                {#if hours > 0}
+                    <strong>{hours}</strong>
+                    <span>{hours > 1 ? 'hrs' : 'hr'}</span>
+                {/if}
+                {#if minutes > 0}
+                    <strong>{minutes}</strong>
+                    <span>{minutes > 1 ? 'mins' : 'min'}</span>
+                {/if}
                 <span>•</span>
-                <strong>5</strong>
-                <span>items</span>
+                <span>Serves</span>
+                <strong>{recipe.serves}</strong>
             </div>
         </div>
         <div class="recipe__options">
@@ -58,6 +66,10 @@
 
             h2 {
                 margin: 0;
+            }
+
+            div {
+                letter-spacing: -5%;
             }
         }
 

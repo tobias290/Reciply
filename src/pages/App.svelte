@@ -58,6 +58,7 @@
         @include flex($direction: column);
 
         background: $color-primary;
+        overflow: hidden;
     }
 
     .header {
@@ -98,5 +99,6 @@
         flex-grow: 1;
         margin-top: -30px;
         padding: 1rem;
+        overflow: auto;
     }
 </style>
