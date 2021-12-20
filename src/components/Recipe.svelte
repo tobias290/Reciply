@@ -2,10 +2,78 @@
     export let recipe;
 </script>
 
-<pre>{JSON.stringify(recipe, null, 2)}</pre>
+<div class="recipe">
+    <img class="recipe__image" src="{recipe.image_url}" alt="{recipe.name}" />
+    <div class="recipe__footer">
+        <div class="recipe__info">
+            <h2>{recipe.name}</h2>
+            <div>
+                <strong>1</strong>
+                <span>hr</span>
+                <strong>30</strong>
+                <span>mins</span>
+                <span>•</span>
+                <strong>5</strong>
+                <span>items</span>
+            </div>
+        </div>
+        <div class="recipe__options">
+            <div class="recipe__options-option">
+                <i class="fas fa-arrow-right"></i>
+            </div>
+        </div>
+    </div>
+</div>
 
 <style lang="scss">
     @import "../css/bootstrap";
 
+    .recipe {
+        @include flex($direction: column);
 
+        border: 8px;
+        height: fit-content;
+        max-width: 500px;
+        width: 100%;
+
+        &__image {
+            border-radius: 8px 8px 0 0;
+            height: 175px;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        &__footer {
+            @include flex($align: center, $justify: space-between);
+
+            background: $color-white-dark;
+            border-radius: 0 0 8px 8px;
+            box-sizing: border-box;
+            height: 80px;
+            padding: 1rem;
+        }
+
+        &__info {
+            @include flex($direction: column, $gap: 8px);
+
+            h2 {
+                margin: 0;
+            }
+        }
+
+        &__options {
+            @include flex($direction: column, $gap: 8px);
+
+            &-option {
+                @include flex($center: true);
+
+                background: $color-primary;
+                border-radius: 20px;
+                color: $color-white;
+                font-size: 1rem;
+                height: 30px;
+                width: 30px;
+            }
+        }
+    }
 </style>

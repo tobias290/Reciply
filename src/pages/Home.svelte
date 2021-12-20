@@ -10,13 +10,19 @@
 {#await loadRecipes}
     <p>...loading</p>
 {:then recipes}
-    {#each recipes as recipe}
-        <Recipe {recipe} />
-    {/each}
+    <div class="recipes">
+        {#each recipes as recipe}
+            <Recipe {recipe} />
+        {/each}
+    </div>
 {:catch error}
     <p style="color: red">{error.message}</p>
 {/await}
 
 <style lang="scss">
     @import "../css/bootstrap";
+
+    .recipes {
+        @include flex($center: true, $direction: column, $gap: 20px);
+    }
 </style>
