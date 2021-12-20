@@ -1,0 +1,35 @@
+@import "variables";
+@import "functions";
+@import "mixins";
+
+.title {
+    color: $color-grey;
+    font-size: 2.5rem;
+    font-weight: 900;
+
+    &::after {
+        color: $color-primary;
+        content: ".";
+        font-weight: bold;
+
+    }
+
+    &--center {
+        text-align: center;
+    }
+}
+
+.button {
+    background: $color-primary;
+    border: none;
+    border-radius: 8px;
+    color: $color-white;
+    cursor: pointer;
+    height: 50px;
+    font-weight: bold;
+
+
+    &:hover, &:focus {
+        background: shade($color-primary, 5%);
+    }
+}

@@ -1,0 +1,23 @@
+.form {
+    @include flex($direction: column, $gap: 10px);
+
+    max-width: 750px;
+    width: 100%;
+
+    &__input {
+        background: $color-white-dark;
+        border-radius: 8px;
+        border: none;
+        height: 50px;
+        font-size: 1rem;
+        padding-left: 1rem;
+        width: 100%;
+    }
+
+    &__submit {
+        @extend .button;
+
+        width: 100%;
+        -webkit-appearance: none;
+    }
+}

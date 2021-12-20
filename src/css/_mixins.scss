@@ -1,0 +1,88 @@
+@mixin center($margin: auto) {
+    left: 0;
+    margin: $margin;
+    right: 0;
+}
+
+@mixin flex ($align: initial, $justify: initial, $direction: initial, $wrap: initial, $inline: false, $center: false, $gap: initial) {
+    align-items: if($center, center, $align);
+    display: if($inline, inline-flex, flex);
+    flex-direction: $direction;
+    flex-wrap: $wrap;
+    gap: $gap;
+    justify-content: if($center, center, $justify);
+}
+
+@mixin grid($grid-columns-width, $repeat: auto-fill, $gap: 25px) {
+    align-items: center;
+    display: grid;
+    gap: $gap;
+    grid-template-columns: repeat($repeat, $grid-columns-width);
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+@mixin page-under-previous($padding: 30px) {
+    margin-top: -30px;
+    overflow: hidden;
+    padding-top: $padding;
+}
+
+@mixin page-over-next($border-radius, $z-index: 1) {
+    border-radius: $border-radius;
+    position: relative;
+    z-index: $z-index;
+}
+
+@mixin touchscreen($is-touchscreen: false) {
+    @if $is-touchscreen {
+        @media (hover: hover) {
+            @content
+        }
+    } @else {
+        @media (hover: none) {
+            @content
+        }
+    }
+}
+
+@mixin media($screen-size: 700px, $height: false) {
+    @if($height) {
+        @media only screen and (max-height: $screen-size) {
+            @content;
+        }
+    } @else {
+        @media only screen and (max-width: $screen-size) {
+            @content;
+        }
+    }
+}
+
+@mixin scroll-bar($background-color, $scrollbar-color, $small: false) {
+    $scrollbar-width: if($small, 5px, 20px);
+    $scrollbar-border-width: if($small, 2px, 8px);
+    $scrollbar-border-width-hover: if($small, 1px, 6px);
+
+    &::-webkit-scrollbar {
+        background: $background-color;
+        height: $scrollbar-width;
+        width: $scrollbar-width;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $scrollbar-color;
+        border-radius: 50px;
+        border: $scrollbar-border-width solid $background-color;
+
+        &:hover {
+            border-width: $scrollbar-border-width-hover;
+        }
+    }
+}
+
+@mixin user-select($value) {
+    -moz-user-select: $value;
+    -webkit-user-select: $value;
+    -ms-user-select: $value;
+    user-select: $value;
+}
