@@ -1,29 +1,26 @@
 <script>
     import { createEventDispatcher } from 'svelte';
-    import { signUp } from "../business/auth";
+    import { logIn } from "../business/auth";
     import { user as userStore, session as sessionStore } from "../stores/sessionStore";
 
     const dispatch = createEventDispatcher();
 
     let email = "";
     let password = "";
-    let confirmPassword = "";
 
     function isValid() {
         if (email === "") return false;
         if (password === "") return false;
-        if (confirmPassword === "") return false;
-        if (password !== confirmPassword) return false;
         return true;
     }
 
-    async function onSignUp(event) {
+    async function onLogIn(event) {
         if (!isValid()) {
             console.log("Not Valid");
             return;
         }
 
-        const { user, session, error } = await signUp(email, password);
+        const { user, session, error } = await logIn(email, password);
 
         if (error) {
             console.log(error);
@@ -35,9 +32,9 @@
 </script>
 
 <div class="sign-up">
-    <h1 class="title title--center">Sign Up</h1>
+    <h1 class="title title--center">Log In</h1>
 
-    <form class="form" on:submit|preventDefault={onSignUp}>
+    <form class="form" on:submit|preventDefault={onLogIn}>
         <input
             class="form__input"
             type="text"
@@ -53,20 +50,13 @@
             required
             autocomplete="new-password"
         />
-        <input
-            class="form__input"
-            type="password"
-            placeholder="Confirm Password"
-            bind:value={confirmPassword}
-            required
-            autocomplete="new-password"
-        />
 
-        <input class="form__submit" type="submit" value="Sign Up" />
+        <input class="form__submit" type="submit" value="Log In" />
     </form>
 
     <div class="options">
-        <span>Already have an account? <a on:click={() => dispatch("showLogIn")}>Log In</a></span>
+        <span>Don't have an account? <a on:click={() => dispatch("showSignUp")}>Create Account</a></span>
+        <span><a on:click={() => dispatch("showForgottenPassword")}>Forgot Password?</a></span>
     </div>
 </div>
 

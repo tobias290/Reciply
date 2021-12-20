@@ -7,8 +7,11 @@ export async function signUp(email, password) {
     });
 }
 
-export function signIn() {
-
+export async function logIn(email, password) {
+    return await supabase.auth.signIn({
+        email: email,
+        password: password,
+    });
 }
 
 export function signOut() {

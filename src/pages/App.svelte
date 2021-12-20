@@ -1,13 +1,35 @@
 <script>
     import SignUp from "./SignUp.svelte";
+    import { user } from "../stores/sessionStore";
+    import { supabase } from "../business/supabaseClient";
+    import Home from "./Home.svelte";
+    import LogIn from "./LogIn.svelte";
 
+    let showSignUp = false;
+
+    user.set(supabase.auth.user());
+
+    supabase.auth.onAuthStateChange((_, session) => {
+        user.set(session.user);
+    });
 </script>
 
 <header class="header">
     <h1 class="app-title">Reciply</h1>
 </header>
 <main>
-    <SignUp />
+    {#if $user}
+        <Home />
+    {:else}
+        {#if showSignUp}
+            <SignUp on:showLogIn={() => showSignUp = false} />
+        {:else}
+            <LogIn
+                on:showSignUp={() => showSignUp = true}
+                on:showForgottenPassword={() => {}}
+            />
+        {/if}
+    {/if}
 </main>
 
 
