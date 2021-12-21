@@ -1,10 +1,9 @@
 <script>
-    import { user } from "../stores/sessionStore";
-    import { supabase } from "../business/supabaseClient";
-    import { logOut } from "../business/auth";
-    import SignUp from "./SignUp.svelte";
-    import LogIn from "./LogIn.svelte";
-    import Main from "./Main.svelte";
+    import { user } from "./stores/sessionStore";
+    import { supabase } from "./business/supabaseClient";
+    import { logOut } from "./business/auth";
+    import LoggedOut from "./layouts/LoggedOut.svelte";
+    import LoggedIn from "./layouts/LoggedIn.svelte";
 
     let showSignUp = false;
 
@@ -33,22 +32,15 @@
 </header>
 <main>
     {#if $user}
-        <Main />
+        <LoggedIn />
     {:else}
-        {#if showSignUp}
-            <SignUp on:showLogIn={() => showSignUp = false} />
-        {:else}
-            <LogIn
-                on:showSignUp={() => showSignUp = true}
-                on:showForgottenPassword={() => {}}
-            />
-        {/if}
+        <LoggedOut />
     {/if}
 </main>
 
 
 <style lang="scss">
-	@import "../css/bootstrap";
+	@import "css/bootstrap";
 
 	*:not(i) {
 		font-family: $font-primary;

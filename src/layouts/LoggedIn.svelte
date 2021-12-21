@@ -1,9 +1,9 @@
 <script>
     import TabBar from "../components/TabBar.svelte";
-    import Home from "./Home.svelte";
-    import ShoppingList from "./ShoppingList.svelte";
-    import WeeklyPlanner from "./WeeklyPlanner.svelte";
-    import Settings from "./Settings.svelte";
+    import Home from "../pages/Home.svelte";
+    import ShoppingList from "../pages/ShoppingList.svelte";
+    import WeeklyPlanner from "../pages/WeeklyPlanner.svelte";
+    import Settings from "../pages/Settings.svelte";
 
     let routes = [
         {

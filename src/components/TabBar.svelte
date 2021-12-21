@@ -68,7 +68,7 @@
 
             &--active {
                 color: $color-grey;
-                transform: scale(1.375);
+                transform: scale(1.25);
             }
         }
 
