@@ -29,18 +29,6 @@
     width: 100%;
 }
 
-@mixin page-under-previous($padding: 30px) {
-    margin-top: -30px;
-    overflow: hidden;
-    padding-top: $padding;
-}
-
-@mixin page-over-next($border-radius, $z-index: 1) {
-    border-radius: $border-radius;
-    position: relative;
-    z-index: $z-index;
-}
-
 @mixin touchscreen($is-touchscreen: false) {
     @if $is-touchscreen {
         @media (hover: hover) {
@@ -55,11 +43,11 @@
 
 @mixin media($screen-size: 700px, $height: false) {
     @if($height) {
-        @media only screen and (max-height: $screen-size) {
+        @media only screen and (min-height: $screen-size) {
             @content;
         }
     } @else {
-        @media only screen and (max-width: $screen-size) {
+        @media only screen and (min-width: $screen-size) {
             @content;
         }
     }

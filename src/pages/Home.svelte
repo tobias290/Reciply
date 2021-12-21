@@ -19,6 +19,7 @@
         <div class="recipes">
             {#each recipes as recipe}
                 <Recipe {recipe} on:showRecipe />
+                <Recipe {recipe} on:showRecipe />
             {/each}
         </div>
     {:catch error}
@@ -32,6 +33,12 @@
     @import "../css/bootstrap";
 
     .recipes {
-        @include flex($center: true, $direction: column, $gap: 20px);
+        @include flex($center: true, $direction: column, $wrap: wrap, $gap: 20px);
+
+        @include media(750px) {
+            align-items: flex-start;
+            flex-direction: row;
+            justify-content: flex-start;
+        }
     }
 </style>

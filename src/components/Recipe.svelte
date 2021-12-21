@@ -45,7 +45,7 @@
 
         border: 8px;
         height: fit-content;
-        max-width: 500px;
+        max-width: 350px;
         width: 100%;
 
         &__image {
