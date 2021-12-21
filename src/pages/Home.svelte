@@ -15,8 +15,6 @@
     <div class="recipes">
         {#each recipes as recipe}
             <Recipe {recipe} />
-            <Recipe {recipe} />
-            <Recipe {recipe} />
         {/each}
     </div>
 {:catch error}
