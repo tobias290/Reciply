@@ -1,9 +1,10 @@
 <script>
-    import TabBar from "../components/TabBar.svelte";
     import Home from "../pages/Home.svelte";
     import ShoppingList from "../pages/ShoppingList.svelte";
     import WeeklyPlanner from "../pages/WeeklyPlanner.svelte";
     import Settings from "../pages/Settings.svelte";
+    import Recipe from "../pages/Recipe.svelte";
+    import TabBar from "../components/TabBar.svelte";
 
     let routes = [
         {
@@ -26,6 +27,8 @@
 
     let active = routes[0];
 
+    let activeRecipe;
+
     function onTabClick(event) {
         for (let route of routes)
             if (route.name === event.detail)
@@ -33,7 +36,14 @@
     }
 </script>
 
-<svelte:component this={active.component} />
+<svelte:component
+    this={active.component}
+    on:showRecipe={(recipe) => activeRecipe = recipe.detail}
+/>
+
+{#if activeRecipe}
+    <Recipe recipe={activeRecipe} />
+{/if}
 
 <TabBar active={active.name} on:tabClick={onTabClick} />
 

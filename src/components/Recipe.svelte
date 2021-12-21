@@ -1,12 +1,16 @@
 <script>
     import { minutesToFormattedTime } from "../helpers/time";
+    import { createEventDispatcher } from "svelte";
 
     export let recipe;
+
+
+    let dispatch = createEventDispatcher();
 
     let { hours, minutes } = minutesToFormattedTime(recipe.cook_time + recipe.prep_time);
 </script>
 
-<div class="recipe">
+<div class="recipe" on:click={() => dispatch("showRecipe", recipe)}>
     <img class="recipe__image" src="{recipe.image_url}" alt="{recipe.name}" />
     <div class="recipe__footer">
         <div class="recipe__info">
