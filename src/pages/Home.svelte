@@ -1,6 +1,8 @@
 <script>
     import { getAllRecipes } from "../business/recipes";
     import Recipe from "../components/Recipe.svelte";
+    import Loading from "../components/Loading.svelte";
+    import Error from "../components/Error.svelte";
 
     let loadRecipes = getAllRecipes();
 </script>
@@ -8,7 +10,7 @@
 <h1 class="title">Your Recipes</h1>
 
 {#await loadRecipes}
-    <p>...loading</p>
+    <Loading />
 {:then recipes}
     <div class="recipes">
         {#each recipes as recipe}
@@ -16,7 +18,7 @@
         {/each}
     </div>
 {:catch error}
-    <p style="color: red">{error.message}</p>
+    <Error>{error.message}</Error>
 {/await}
 
 <style lang="scss">
