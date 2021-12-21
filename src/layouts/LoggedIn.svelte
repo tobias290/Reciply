@@ -42,7 +42,7 @@
 />
 
 {#if activeRecipe}
-    <Recipe recipe={activeRecipe} />
+    <Recipe recipe={activeRecipe} on:close={() => activeRecipe = null} />
 {/if}
 
 <TabBar active={active.name} on:tabClick={onTabClick} />
