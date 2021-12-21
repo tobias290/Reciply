@@ -3,8 +3,8 @@
     import { supabase } from "../business/supabaseClient";
     import { logOut } from "../business/auth";
     import SignUp from "./SignUp.svelte";
-    import Home from "./Home.svelte";
     import LogIn from "./LogIn.svelte";
+    import Main from "./Main.svelte";
 
     let showSignUp = false;
 
@@ -33,7 +33,7 @@
 </header>
 <main>
     {#if $user}
-        <Home />
+        <Main />
     {:else}
         {#if showSignUp}
             <SignUp on:showLogIn={() => showSignUp = false} />
