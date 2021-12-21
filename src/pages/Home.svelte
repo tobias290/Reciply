@@ -19,7 +19,6 @@
         <div class="recipes">
             {#each recipes as recipe}
                 <Recipe {recipe} on:showRecipe />
-                <Recipe {recipe} on:showRecipe />
             {/each}
         </div>
     {:catch error}
