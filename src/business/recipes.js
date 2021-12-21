@@ -21,7 +21,7 @@ export function getAllRecipes() {
 /**
  * Fetches all the details (ingredients, steps) relating to the given recipe (id).
  *
- * @param recipeId - ID of the recipe to fetch related details from.
+ * @param {number} recipeId - ID of the recipe to fetch related details from.
  *
  * @returns {Promise<unknown>} - Returns promise fetch the data.
  */
