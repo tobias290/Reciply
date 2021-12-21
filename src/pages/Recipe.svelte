@@ -6,11 +6,13 @@
     export let recipe;
 
     let dispatch = createEventDispatcher();
+
+    const close = () => dispatch("close");
 </script>
 
 <div class="recipe" transition:fly="{{ y: document.body.clientHeight, duration: 375, opacity: 1 }}">
     <h1>Active Recipe - {recipe.name}</h1>
-    <button on:click={() => dispatch("close")}>Close</button>
+    <button on:click={close}>Close</button>
 </div>
 
 <style lang="scss">
