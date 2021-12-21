@@ -2,6 +2,7 @@
     import { createEventDispatcher } from 'svelte';
     import { signUp } from "../business/auth";
     import { user as userStore, session as sessionStore } from "../stores/sessionStore";
+    import InputErrors from "../components/InputErrors.svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -9,24 +10,58 @@
     let password = "";
     let confirmPassword = "";
 
+    let alertError = "";
+    let errors = {
+        email: [],
+        password: [],
+        confirmPassword: [],
+    };
+
+    function clearErrors() {
+        errors = {
+            email: [],
+            password: [],
+            confirmPassword: [],
+        };
+    }
+
     function isValid() {
-        if (email === "") return false;
-        if (password === "") return false;
-        if (confirmPassword === "") return false;
-        if (password !== confirmPassword) return false;
-        return true;
+        let errorsOccurred = false;
+
+        if (email === "") {
+            errors.email.push("Email required");
+            errorsOccurred = true;
+        }
+
+        if (password === "") {
+            errors.password.push("Password required");
+            errorsOccurred = true;
+        }
+
+        if (confirmPassword === "") {
+            errors.confirmPassword.push("Confirm password required");
+            errorsOccurred = true;
+        }
+
+        if (password !== confirmPassword) {
+            errors.confirmPassword.push("Passwords do not match");
+            errorsOccurred = true;
+        }
+
+        return !errorsOccurred;
     }
 
     async function onSignUp(event) {
         if (!isValid()) {
-            console.log("Not Valid");
+            alertError = "Please check the form for errors";
+            console.log(errors);
             return;
         }
 
         const { user, session, error } = await signUp(email, password);
 
         if (error) {
-            console.log(error);
+            alertError = error.message;
         } else {
             userStore.set(user);
             sessionStore.set(session);
@@ -37,14 +72,19 @@
 <div class="sign-up">
     <h1 class="title title--center">Sign Up</h1>
 
+    {#if alertError}
+        <div class="alert alert--error">{alertError}</div>
+    {/if}
+
     <form class="form" on:submit|preventDefault={onSignUp}>
         <input
             class="form__input"
-            type="text"
+            type="email"
             placeholder="Email"
             bind:value={email}
             required
         />
+        <InputErrors errors={errors.email} />
         <input
             class="form__input"
             type="password"
@@ -53,6 +93,7 @@
             required
             autocomplete="new-password"
         />
+        <InputErrors errors={errors.password} />
         <input
             class="form__input"
             type="password"
@@ -61,6 +102,7 @@
             required
             autocomplete="new-password"
         />
+        <InputErrors errors={errors.confirmPassword} />
 
         <input class="form__submit" type="submit" value="Sign Up" />
     </form>

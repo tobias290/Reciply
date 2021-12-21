@@ -34,3 +34,26 @@
         background: shade($color-primary, 5%);
     }
 }
+
+.alert {
+    @include flex($align: center, $justify: flex-start);
+
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: .875rem;
+    height: 50px;
+    padding: 1rem;
+    margin: 1rem;
+    min-height: 50px;
+    width: 100%;
+
+    &--error {
+        background: rgba($color-error, .25);
+        color: $color-error;
+    }
+
+    &--success {
+        background: rgba($color-success, .25);
+        color: $color-success;
+    }
+}

@@ -65,7 +65,7 @@
         @include flex($center: true);
 
         box-sizing: border-box;
-        height: 190px;
+        height: 175px;
         padding: 0 1rem 30px 1rem;
         transition: height .25s linear;
 

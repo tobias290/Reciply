@@ -2,28 +2,54 @@
     import { createEventDispatcher } from "svelte";
     import { logIn } from "../business/auth";
     import { user as userStore, session as sessionStore } from "../stores/sessionStore";
+    import InputErrors from "../components/InputErrors.svelte";
 
     const dispatch = createEventDispatcher();
 
     let email = "";
     let password = "";
 
+    let alertError = "";
+    let errors = {
+        email: [],
+        password: [],
+    };
+
+    function clearErrors() {
+        errors = {
+            email: [],
+            password: [],
+        };
+    }
+
     function isValid() {
-        if (email === "") return false;
-        if (password === "") return false;
-        return true;
+        let errorsOccurred = false;
+
+        if (email === "") {
+            errors.email.push("Email required");
+            errorsOccurred = true;
+        }
+
+        if (password === "") {
+            errors.password.push("Password required");
+            errorsOccurred = true;
+        }
+
+        return !errorsOccurred;
     }
 
     async function onLogIn(event) {
+        clearErrors();
+
         if (!isValid()) {
-            console.log("Not Valid");
+            alertError = "Please check the form for errors";
             return;
         }
 
         const { user, session, error } = await logIn(email, password);
 
         if (error) {
-            console.log(error);
+            alertError = error.message;
         } else {
             userStore.set(user);
             sessionStore.set(session);
@@ -34,14 +60,19 @@
 <div class="sign-up">
     <h1 class="title title--center">Log In</h1>
 
+    {#if alertError}
+        <div class="alert alert--error">{alertError}</div>
+    {/if}
+
     <form class="form" on:submit|preventDefault={onLogIn}>
         <input
             class="form__input"
-            type="text"
+            type="email"
             placeholder="Email"
             bind:value={email}
             required
         />
+        <InputErrors errors={errors.email} />
         <input
             class="form__input"
             type="password"
@@ -50,6 +81,7 @@
             required
             autocomplete="new-password"
         />
+        <InputErrors errors={errors.password} />
 
         <input class="form__submit" type="submit" value="Log In" />
     </form>
