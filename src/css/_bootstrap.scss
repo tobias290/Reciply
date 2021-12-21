@@ -36,6 +36,7 @@
 }
 
 .alert {
+    @include center;
     @include flex($align: center, $justify: flex-start);
 
     border-radius: 8px;
@@ -44,6 +45,7 @@
     height: 50px;
     padding: 1rem;
     margin: 1rem;
+    max-width: 500px;
     min-height: 50px;
     width: 100%;
 

@@ -48,13 +48,14 @@
             errorsOccurred = true;
         }
 
+        errors = errors;
+
         return !errorsOccurred;
     }
 
-    async function onSignUp(event) {
+    async function onSignUp() {
         if (!isValid()) {
-            alertError = "Please check the form for errors";
-            console.log(errors);
+            alertError = "Please check the form for errors.";
             return;
         }
 

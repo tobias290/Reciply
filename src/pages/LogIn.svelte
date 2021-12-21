@@ -35,10 +35,12 @@
             errorsOccurred = true;
         }
 
+        errors = errors;
+
         return !errorsOccurred;
     }
 
-    async function onLogIn(event) {
+    async function onLogIn() {
         clearErrors();
 
         if (!isValid()) {
