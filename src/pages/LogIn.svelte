@@ -96,7 +96,8 @@
 
 <style lang="scss">
     @import "../css/bootstrap.scss";
-    @import "../css/forms.scss";
+    @import "../css/components/forms";
+    @import "../css/components/alert.scss";
 
     .sign-up {
         @include flex($align: center, $justify: space-between, $direction: column);

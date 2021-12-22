@@ -12,5 +12,5 @@
 
 <style lang="scss">
     @import "../css/bootstrap.scss";
-    @import "../css/forms.scss";
+    @import "../css/components/forms";
 </style>

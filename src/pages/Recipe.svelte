@@ -1,13 +1,27 @@
 <script>
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     import { fly } from "svelte/transition";
     import { minutesToFormattedTime } from "../helpers/time";
-    import { getRecipeDetails } from "../business/recipes";
+    import { getRecipeIngredients, getRecipeInstructions } from "../business/recipes";
+    import Loading from "../components/Loading.svelte";
+    import Error from "../components/Error.svelte";
+    import RecipeIngredients from "./sub/RecipeIngredients.svelte";
+    import RecipeInstructions from "./sub/RecipeInstructions.svelte";
 
     export let recipe;
 
+    let loadIngredients, loadInstructions;
+
+    let ingredientsPage = false;
+
+    onMount(async () => {
+        loadIngredients = getRecipeIngredients(recipe.id);
+        loadInstructions = getRecipeInstructions(recipe.id)
+    });
+
     let dispatch = createEventDispatcher();
 
+    const toggle = () => ingredientsPage = !ingredientsPage;
     const close = () => dispatch("close");
 </script>
 
@@ -26,16 +40,43 @@
         </div>
     </div>
     <div class="recipe">
-        <ul>
-            {#each Array(100) as _, i}
-                <li>{i + 1}</li>
-            {/each}
-        </ul>
+        <div class="switch">
+            <div class="switch__background" class:switch__background--left={ingredientsPage} class:switch__background--right={!ingredientsPage}></div>
+            <div class="switch__toggle" class:switch__toggle--active={ingredientsPage} on:click={toggle}>Ingredients</div>
+            <div class="switch__toggle" class:switch__toggle--active={!ingredientsPage} on:click={toggle}>Instructions</div>
+        </div>
+
+        {#if ingredientsPage}
+            {#if loadIngredients}
+                {#await loadIngredients}
+                    <Loading />
+                {:then ingredients}
+                    <RecipeIngredients {ingredients} />
+                {:catch error}
+                    <Error>{error.message}</Error>
+                {/await}
+            {:else}
+                <Loading />
+            {/if}
+        {:else}
+            {#if loadInstructions}
+                {#await loadInstructions}
+                    <Loading />
+                {:then instructions}
+                    <RecipeInstructions {instructions} />
+                {:catch error}
+                    <Error>{error.message}</Error>
+                {/await}
+            {:else}
+                <Loading />
+            {/if}
+        {/if}
     </div>
 </div>
 
 <style lang="scss">
     @import "../css/bootstrap";
+    @import "../css/components/switch";
 
     .recipe-model {
         @include flex($direction: column);
@@ -107,10 +148,14 @@
         }
     }
 
+    .switch {
+        margin-bottom: 1.2rem;
+    }
+
     .recipe {
         background: $color-white;
         border-radius: 16px 16px 0 0;
         flex-grow: 1;
-        padding-top: 30px;
+        padding: 1rem;
     }
 </style>

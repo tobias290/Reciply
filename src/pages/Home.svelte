@@ -1,11 +1,11 @@
 <script>
+    import { onMount } from "svelte";
     import { getAllRecipes } from "../business/recipes";
     import Recipe from "../components/Recipe.svelte";
     import Loading from "../components/Loading.svelte";
     import Error from "../components/Error.svelte";
-    import { onMount } from "svelte";
 
-    let loadRecipes = null;
+    let loadRecipes;
 
     onMount(async () => loadRecipes = getAllRecipes());
 </script>
