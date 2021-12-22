@@ -48,7 +48,6 @@
         height: 50px;
         min-height: 50px;
         position: relative;
-        max-width: 350px;
         width: 100%;
 
         &__background {
