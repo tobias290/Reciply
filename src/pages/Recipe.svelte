@@ -96,9 +96,8 @@
         background: linear-gradient(rgba($color-black, 0.5), rgba($color-black, 0.5)), var(--image) 50%;
         background-size: cover;
         box-sizing: border-box;
-        height: calc(175px + 30px);
         margin-bottom: -30px;
-        min-height: calc(175px + 30px);
+        min-height: clamp(calc(175px + 30px), calc(30% + 30px), calc(500px + 30px));
         padding: .75rem .75rem calc(.75rem + 30px) .75rem;
         width: 100%;
 
