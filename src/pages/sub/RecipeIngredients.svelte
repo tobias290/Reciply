@@ -6,7 +6,10 @@
     {#each ingredients as ingredient}
         <li class="ingredients__ingredient">
             <span class="ingredients__ingredient-amount">
-                {ingredient.quantity} {ingredient.unit}
+                {ingredient.quantity === 0 ? "To Taste" : ingredient.quantity}
+                {#if ingredient.unit}
+                    {ingredient.unit}
+                {/if}
             </span>
             {ingredient.name}
         </li>
@@ -36,6 +39,7 @@
                 color: $color-white;
                 font-weight: bold;
                 height: 30px;
+                min-width: 80px;
                 width: 80px;
             }
         }

@@ -30,7 +30,8 @@ export function getRecipeIngredients(recipeId) {
         let { data, error, status } = await supabase
             .from("ingredient")
             .select()
-            .eq("recipe_id", recipeId);
+            .eq("recipe_id", recipeId)
+            .order("order");
 
         if (error)
             return reject(error);
@@ -51,7 +52,8 @@ export function getRecipeInstructions(recipeId) {
         let { data, error, status } = await supabase
             .from("instruction")
             .select()
-            .eq("recipe_id", recipeId);
+            .eq("recipe_id", recipeId)
+            .order("step");
 
         if (error)
             return reject(error);

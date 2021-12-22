@@ -13,7 +13,7 @@
 
     let loadIngredients, loadInstructions;
 
-    let ingredientsPage = false;
+    let ingredientsPage = true;
 
     onMount(async () => {
         loadIngredients = getRecipeIngredients(recipe.id);
