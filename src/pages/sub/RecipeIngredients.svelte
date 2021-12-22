@@ -30,6 +30,8 @@
 
             color: $color-grey;
             font-size: 1rem;
+            width: 100%;
+
 
             &-amount {
                 @include flex($center: true);
