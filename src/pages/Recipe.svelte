@@ -51,7 +51,7 @@
                 {#await loadIngredients}
                     <Loading />
                 {:then ingredients}
-                    <RecipeIngredients {ingredients} />
+                    <RecipeIngredients {ingredients} serves={recipe.serves} />
                 {:catch error}
                     <Error>{error.message}</Error>
                 {/await}
