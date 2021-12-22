@@ -12,8 +12,8 @@
 
     let dispatch = createEventDispatcher();
 
-    const onToggle = () => {
-        toggle = !toggle;
+    const onToggle = (state) => {
+        toggle = state;
         dispatch("toggle", toggle)
     };
 </script>
@@ -28,12 +28,12 @@
     <div
         class="switch__toggle"
         class:switch__toggle--active={toggle}
-        on:click={onToggle}
+        on:click={() => onToggle(true)}
     ><slot name="left"></slot></div>
     <div
         class="switch__toggle"
          class:switch__toggle--active={!toggle}
-         on:click={onToggle}
+         on:click={() => onToggle(false)}
     ><slot name="right"></slot></div>
 </div>
 
