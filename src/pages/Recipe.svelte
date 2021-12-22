@@ -7,6 +7,7 @@
     import Error from "../components/Error.svelte";
     import RecipeIngredients from "./sub/RecipeIngredients.svelte";
     import RecipeInstructions from "./sub/RecipeInstructions.svelte";
+    import Switch from "../components/Switch.svelte";
 
     export let recipe;
 
@@ -40,11 +41,10 @@
         </div>
     </div>
     <div class="recipe">
-        <div class="switch">
-            <div class="switch__background" class:switch__background--left={ingredientsPage} class:switch__background--right={!ingredientsPage}></div>
-            <div class="switch__toggle" class:switch__toggle--active={ingredientsPage} on:click={toggle}>Ingredients</div>
-            <div class="switch__toggle" class:switch__toggle--active={!ingredientsPage} on:click={toggle}>Instructions</div>
-        </div>
+        <Switch on:toggle={(toggle) => ingredientsPage = toggle.detail}>
+            <span slot="left">Ingredients</span>
+            <span slot="right">Instructions</span>
+        </Switch>
 
         {#if ingredientsPage}
             {#if loadIngredients}
@@ -76,7 +76,6 @@
 
 <style lang="scss">
     @import "../css/bootstrap";
-    @import "../css/components/switch";
 
     .recipe-model {
         @include flex($direction: column);
@@ -148,7 +147,7 @@
         }
     }
 
-    .switch {
+    :global(.switch) {
         margin-bottom: 1.2rem;
     }
 
