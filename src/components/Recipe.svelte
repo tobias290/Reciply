@@ -5,8 +5,7 @@
     export let recipe;
     export let actions;
 
-
-    let dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher();
 
     let { hours, minutes } = minutesToFormattedTime(recipe.cook_time + recipe.prep_time);
 </script>
