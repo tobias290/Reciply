@@ -105,16 +105,11 @@ export async function removeFromWeeklyPlan(weeklyPlannerId) {
 }
 
 export async function getShoppingListRecipeCheckedIngredients() {
-    return new Promise(async (resolve, reject) => {
-        let { data, error, status } = await supabase
-            .from("shopping_list_checked_ingredients")
-            .select();
+    let { data, error, status } = await supabase
+        .from("shopping_list_checked_ingredients")
+        .select();
 
-        if (error)
-            return reject(error);
-
-        resolve(data);
-    });
+    return {checkedIngredients: data, error: error};
 }
 
 export async function checkShoppingListRecipeIngredients(ingredientId) {
