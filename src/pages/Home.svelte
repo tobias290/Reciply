@@ -5,27 +5,25 @@
     import Loading from "../components/Loading.svelte";
     import Error from "../components/Error.svelte";
 
-    let loadRecipes;
+    let recipes, error;
 
-    onMount(async () => loadRecipes = getAllRecipes());
+    onMount(async () => {
+        ({recipes, error} = await getAllRecipes())
+    });
 </script>
 
 <h1 class="title">Your Recipes</h1>
 
-{#if loadRecipes}
-    {#await loadRecipes}
-        <Loading />
-    {:then recipes}
-        <div class="recipes">
-            {#each recipes as recipe}
-                <Recipe {recipe} on:click />
-            {:else}
-                <p style="font-size: 1.5rem">No Recipes</p>
-            {/each}
-        </div>
-    {:catch error}
-        <Error>{error.message}</Error>
-    {/await}
+{#if recipes && !error }
+    <div class="recipes">
+        {#each recipes as recipe}
+            <Recipe {recipe} on:click />
+        {:else}
+            <p style="font-size: 1.5rem">No Recipes</p>
+        {/each}
+    </div>
+{:else if error}
+    <Error>{error.message}</Error>
 {:else}
     <Loading />
 {/if}

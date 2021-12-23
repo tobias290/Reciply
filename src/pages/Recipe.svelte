@@ -11,13 +11,13 @@
 
     export let recipe;
 
-    let loadIngredients, loadInstructions;
-
+    let ingredients, instructions;
     let ingredientsPage = true;
+    let error;
 
     onMount(async () => {
-        loadIngredients = getRecipeIngredients(recipe.id);
-        loadInstructions = getRecipeInstructions(recipe.id)
+        ({ingredients, error} = await getRecipeIngredients(recipe.id));
+        ({instructions, error} = await getRecipeInstructions(recipe.id));
     });
 
     let dispatch = createEventDispatcher();
@@ -47,26 +47,18 @@
         </Switch>
 
         {#if ingredientsPage}
-            {#if loadIngredients}
-                {#await loadIngredients}
-                    <Loading />
-                {:then ingredients}
-                    <RecipeIngredients {ingredients} serves={recipe.serves} />
-                {:catch error}
-                    <Error>{error.message}</Error>
-                {/await}
+            {#if ingredients && !error}
+                <RecipeIngredients {ingredients} serves={recipe.serves} />
+            {:else if error }
+                <Error>{error.message}</Error>
             {:else}
                 <Loading />
             {/if}
         {:else}
-            {#if loadInstructions}
-                {#await loadInstructions}
-                    <Loading />
-                {:then instructions}
-                    <RecipeInstructions {instructions} />
-                {:catch error}
-                    <Error>{error.message}</Error>
-                {/await}
+            {#if instructions && !error}
+                <RecipeInstructions {instructions} />
+            {:else if error }
+                <Error>{error.message}</Error>
             {:else}
                 <Loading />
             {/if}

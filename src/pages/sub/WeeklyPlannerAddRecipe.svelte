@@ -10,12 +10,12 @@
 
     const dispatch = createEventDispatcher();
 
-    let loadRecipes;
+    let recipes, error;
     let searchQuery = "";
 
-    onMount(async () => loadRecipes = getAllRecipes());
+    onMount(async () => ({recipes, error} = await getAllRecipes()));
 
-    const filterRecipes = (recipes, searchQuery) => recipes.filter(recipe =>
+    const filterRecipes = (searchQuery) => recipes.filter(recipe =>
         recipe.name.includes(searchQuery) && !alreadyAddedRecipes.includes(recipe.id)
     );
 </script>
@@ -34,24 +34,20 @@
         />
     </form>
 
-    {#if loadRecipes}
-        {#await loadRecipes}
-            <Loading />
-        {:then recipes}
-            <div class="recipes">
-                {#each filterRecipes(recipes, searchQuery) as recipe}
-                    <Recipe
-                        {recipe}
-                        on:click={() => dispatch("add", recipe)}
-                        actions={[{ icon: "plus" }]}
-                    />
-                {:else}
-                    <p style="font-size: 1.5rem">No Results</p>
-                {/each}
-            </div>
-        {:catch error}
-            <Error>{error.message}</Error>
-        {/await}
+    {#if recipes && !error}
+        <div class="recipes">
+            {#each filterRecipes(searchQuery) as recipe}
+                <Recipe
+                    {recipe}
+                    on:click={() => dispatch("add", recipe)}
+                    actions={[{ icon: "plus" }]}
+                />
+            {:else}
+                <p style="font-size: 1.5rem">No Results</p>
+            {/each}
+        </div>
+    {:else if error}
+        <Error>{error.message}</Error>
     {:else}
         <Loading />
     {/if}

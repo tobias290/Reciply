@@ -25,7 +25,7 @@
         },
     ];
 
-    let active = routes[2]; // TODO: Set to 0 for production
+    let active = routes[1]; // TODO: Set to 0 for production
 
     let activeRecipe;
 

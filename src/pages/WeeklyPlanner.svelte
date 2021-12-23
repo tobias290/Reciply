@@ -9,20 +9,24 @@
     let days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     let activeDay = 0;
     let addRecipe = false;
-    let weeklyPlannerLoader;
+    let weeklyPlan = [];
+    let error;
+    let recipesForActiveDay;
+
+    $: recipesForActiveDay = weeklyPlan.filter(recipe => recipe.day === activeDay);
 
     onMount(async () => {
-        weeklyPlannerLoader = getWeeklyPlan();
+        ({weeklyPlan, error } = await getWeeklyPlan());
     });
 
     async function onRemoveRecipe(weeklyPlannerId) {
         await removeFromWeeklyPlan(weeklyPlannerId);
-        weeklyPlannerLoader = getWeeklyPlan();
+        ({weeklyPlan, error } = await getWeeklyPlan());
     }
 
     async function onAddRecipe(recipe) {
         await addToWeeklyPlan(recipe.detail.id, activeDay);
-        weeklyPlannerLoader = getWeeklyPlan();
+        ({weeklyPlan, error } = await getWeeklyPlan());
         addRecipe = false;
     }
 </script>
@@ -31,47 +35,41 @@
 
 <div class="day-picker">
     {#each days as day, i}
-        <div
-            class="day-picker__day"
-            class:day-picker__day--active={activeDay === i}
-            on:click={() => activeDay = i}
-        >{day}</div>
+        <div class="day-picker__day" class:day-picker__day--active={activeDay === i} on:click={() => activeDay = i}>
+            {day}
+        </div>
     {/each}
 </div>
 
-{#if weeklyPlannerLoader}
-    {#await weeklyPlannerLoader}
-        <Loading />
-    {:then recipes}
-        <div class="recipes">
-            {#each recipes.filter(recipe => recipe.day === activeDay) as recipe}
-                <Recipe
-                    recipe={recipe.recipe}
-                    actions={[{
-                        color: "red",
-                        icon: "minus",
-                        action: () => onRemoveRecipe(recipe.id),
-                    }]}
-                    on:click
-                />
-            {/each}
-
-            <div class="add-recipe-button" on:click={() => addRecipe = true}>
-                <span>Add Recipe</span>
-                <span><i class="fas fa-plus"></i></span>
-            </div>
-        </div>
-
-        {#if addRecipe}
-            <WeeklyPlannerAddRecipe
-                alreadyAddedRecipes={recipes.filter(recipe => recipe.day === activeDay).map(recipe => recipe.recipe.id)}
-                on:add={onAddRecipe}
-                on:close={() => addRecipe = false}
+{#if weeklyPlan && !error}
+    <div class="recipes">
+        {#each recipesForActiveDay as recipe}
+            <Recipe
+                recipe={recipe.recipe}
+                actions={[{
+                    color: "red",
+                    icon: "minus",
+                    action: () => onRemoveRecipe(recipe.id),
+                }]}
+                on:click
             />
-        {/if}
-    {:catch error}
-        <Error>{error.message}</Error>
-    {/await}
+        {/each}
+
+        <div class="add-recipe-button" on:click={() => addRecipe = true}>
+            <span>Add Recipe</span>
+            <span><i class="fas fa-plus"></i></span>
+        </div>
+    </div>
+
+    {#if addRecipe}
+        <WeeklyPlannerAddRecipe
+            alreadyAddedRecipes={recipesForActiveDay.map(recipe => recipe.recipe.id)}
+            on:add={onAddRecipe}
+            on:close={() => addRecipe = false}
+        />
+    {/if}
+{:else if error}
+    <Error>{error.message}</Error>
 {:else}
     <Loading />
 {/if}

@@ -6,17 +6,12 @@ import { supabase } from "./supabaseClient";
  *
  * @returns {Promise<unknown>} - Returns promise fetch the data.
  */
-export function getAllRecipes() {
-    return new Promise(async (resolve, reject) => {
-        let { data, error, status } = await supabase
-            .from("recipe")
-            .select();
+export async function getAllRecipes() {
+    let { data, error, status } = await supabase
+        .from("recipe")
+        .select();
 
-        if (error)
-            return reject(error);
-
-        resolve(data);
-    });
+    return {recipes: data, error: error};
 }
 
 /**
@@ -26,19 +21,14 @@ export function getAllRecipes() {
  *
  * @returns {Promise<unknown>} - Returns promise fetch the data.
  */
-export function getRecipeIngredients(recipeId) {
-    return new Promise(async (resolve, reject) => {
-        let { data, error, status } = await supabase
-            .from("ingredient")
-            .select()
-            .eq("recipe_id", recipeId)
-            .order("order");
+export async function getRecipeIngredients(recipeId) {
+    let { data, error, status } = await supabase
+        .from("ingredient")
+        .select()
+        .eq("recipe_id", recipeId)
+        .order("order");
 
-        if (error)
-            return reject(error);
-
-        resolve(data);
-    });
+    return {ingredients: data, error: error};
 }
 
 /**
@@ -48,19 +38,14 @@ export function getRecipeIngredients(recipeId) {
  *
  * @returns {Promise<unknown>} - Returns promise fetch the data.
  */
-export function getRecipeInstructions(recipeId) {
-    return new Promise(async (resolve, reject) => {
-        let { data, error, status } = await supabase
-            .from("instruction")
-            .select()
-            .eq("recipe_id", recipeId)
-            .order("step");
+export async function getRecipeInstructions(recipeId) {
+    let { data, error, status } = await supabase
+        .from("instruction")
+        .select()
+        .eq("recipe_id", recipeId)
+        .order("step");
 
-        if (error)
-            return reject(error);
-
-        resolve(data);
-    });
+    return {instructions: data, error: error};
 }
 
 /**
@@ -68,24 +53,19 @@ export function getRecipeInstructions(recipeId) {
  *
  * @returns {Promise<unknown>} - Returns promise fetch the data.
  */
-export function getWeeklyPlan() {
-    return new Promise(async (resolve, reject) => {
-        let { data, error, status } = await supabase
-            .from("weekly_planner")
-            .select(`
-                id, day, recipe_id, user_id,
-                recipe (
-                    id, name, image_url, 
-                    prep_time, cook_time, serves,
-                    created_at, updated_at
-                )
-            `)
+export async function getWeeklyPlan() {
+    let { data, error, status } = await supabase
+        .from("weekly_planner")
+        .select(`
+            id, day, recipe_id, user_id,
+            recipe (
+                id, name, image_url, 
+                prep_time, cook_time, serves,
+                created_at, updated_at
+            )
+        `);
 
-        if (error)
-            return reject(error);
-
-        resolve(data);
-    });
+    return {weeklyPlan: data, error: error};
 }
 
 /**
@@ -122,4 +102,21 @@ export async function removeFromWeeklyPlan(weeklyPlannerId) {
         .match({id: weeklyPlannerId})
 
     return !error;
+}
+
+export async function getShoppingListRecipeCheckedIngredients() {
+    return new Promise(async (resolve, reject) => {
+        let { data, error, status } = await supabase
+            .from("shopping_list_checked_ingredients")
+            .select();
+
+        if (error)
+            return reject(error);
+
+        resolve(data);
+    });
+}
+
+export async function checkShoppingListRecipeIngredients(ingredientId) {
+
 }
