@@ -36,12 +36,12 @@
     {:then recipes}
         <div class="recipes">
             {#each recipes.filter(recipe => recipe.day === activeDay) as recipe}
-                <Recipe recipe={recipe.recipe} />
+                <Recipe recipe={recipe.recipe} on:showRecipe />
             {/each}
 
             <div class="add-item">
                 <span>Add Recipe</span>
-                <span><i class="fas fa-arrow-right"></i></span>
+                <span><i class="fas fa-plus"></i></span>
             </div>
         </div>
     {:catch error}
