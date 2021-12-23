@@ -88,6 +88,14 @@ export function getWeeklyPlan() {
     });
 }
 
+/**
+ * Adds a recipe to the authenticated user's weekly planner
+ *
+ * @param {number} recipeId - ID of the recipe to add.
+ * @param {number} weekday - Weekday to add the recipe to.
+ *
+ * @returns {boolean} - Returns true if successes, false if it failed.
+ */
 export async function addToWeeklyPlan(recipeId, weekday) {
     let { data, error } = await supabase
         .from("weekly_planner")
@@ -100,6 +108,13 @@ export async function addToWeeklyPlan(recipeId, weekday) {
     return !error;
 }
 
+/**
+ * Removes the given recipe to the authenticated user's weekly planner
+ *
+ * @param {number} weeklyPlannerId - ID of the weekly planner row to delete.
+ *
+ * @returns {boolean} - Returns true if successes, false if it failed.
+ */
 export async function removeFromWeeklyPlan(weeklyPlannerId) {
     let { data, error } = await supabase
         .from("weekly_planner")
