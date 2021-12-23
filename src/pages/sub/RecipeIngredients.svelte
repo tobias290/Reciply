@@ -33,7 +33,7 @@
                     {ingredient.unit}
                 {/if}
             </span>
-            {ingredient.name}
+            {`${ingredient.name}${ingredient.details ? `, ${ingredient.details}` : ''}`}
         </li>
     {/each}
 </ul>
