@@ -3,6 +3,7 @@
     import { createEventDispatcher } from "svelte";
 
     export let recipe;
+    export let actions;
 
 
     let dispatch = createEventDispatcher();
@@ -10,7 +11,7 @@
     let { hours, minutes } = minutesToFormattedTime(recipe.cook_time + recipe.prep_time);
 </script>
 
-<div class="recipe" on:click={() => dispatch("showRecipe", recipe)}>
+<div class="recipe" on:click={() => dispatch("click", recipe)}>
     <img class="recipe__image" src="{recipe.image_url}" alt="{recipe.name}" />
     <div class="recipe__footer">
         <div class="recipe__info">
@@ -30,9 +31,20 @@
             </div>
         </div>
         <div class="recipe__options">
-            <div class="recipe__options-option">
-                <i class="fas fa-arrow-right"></i>
-            </div>
+            {#if actions}
+                {#each actions as action}
+                    <div
+                        class="recipe__options-option {action.color ? `recipe__options-option--${action.color}` : ''}"
+                        on:click|stopPropagation={() => action.action ? action.action(recipe) : null}
+                    >
+                        <i class="fas fa-{action.icon}"></i>
+                    </div>
+                {/each}
+            {:else}
+                <div class="recipe__options-option">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            {/if}
         </div>
     </div>
 </div>
@@ -78,10 +90,18 @@
         }
 
         &__options {
-            @include flex($direction: column, $gap: 8px);
+            @include flex($align: center, $justify: flex-start, $gap: 8px);
 
             &-option {
                 @include option;
+
+                &--green {
+                    background: $color-green;
+                }
+
+                &--red {
+                    background: $color-red;
+                }
             }
         }
     }

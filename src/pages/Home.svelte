@@ -18,7 +18,7 @@
     {:then recipes}
         <div class="recipes">
             {#each recipes as recipe}
-                <Recipe {recipe} on:showRecipe />
+                <Recipe {recipe} on:click />
             {/each}
         </div>
     {:catch error}

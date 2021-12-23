@@ -38,7 +38,7 @@
 
 <svelte:component
     this={active.component}
-    on:showRecipe={(recipe) => activeRecipe = recipe.detail}
+    on:click={(recipe) => activeRecipe = recipe.detail}
 />
 
 {#if activeRecipe}

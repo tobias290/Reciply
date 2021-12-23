@@ -1,21 +1,30 @@
 <script>
     import { onMount } from "svelte";
-    import { getWeeklyPlan } from "../business/recipes";
+    import { getWeeklyPlan, addToWeeklyPlan, removeFromWeeklyPlan } from "../business/recipes";
     import Loading from "../components/Loading.svelte";
     import Error from "../components/Error.svelte";
     import Recipe from "../components/Recipe.svelte";
+    import WeeklyPlannerAddRecipe from "./sub/WeeklyPlannerAddRecipe.svelte";
 
-    let days = [
-        "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
-    ];
-
+    let days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     let activeDay = 0;
-
+    let addRecipe = true;
     let weeklyPlannerLoader;
 
     onMount(async () => {
         weeklyPlannerLoader = getWeeklyPlan();
     });
+
+    async function onRemoveRecipe(weeklyPlannerId) {
+        await removeFromWeeklyPlan(weeklyPlannerId);
+        weeklyPlannerLoader = getWeeklyPlan();
+    }
+
+    async function onAddRecipe(recipe) {
+        await addToWeeklyPlan(recipe.detail.id, activeDay);
+        weeklyPlannerLoader = getWeeklyPlan();
+        addRecipe = false;
+    }
 </script>
 
 <h1 class="title">Weekly Planner</h1>
@@ -36,10 +45,18 @@
     {:then recipes}
         <div class="recipes">
             {#each recipes.filter(recipe => recipe.day === activeDay) as recipe}
-                <Recipe recipe={recipe.recipe} on:showRecipe />
+                <Recipe
+                    recipe={recipe.recipe}
+                    actions={[{
+                        color: "red",
+                        icon: "minus",
+                        action: () => onRemoveRecipe(recipe.id),
+                    }]}
+                    on:click
+                />
             {/each}
 
-            <div class="add-item">
+            <div class="add-recipe-button" on:click={() => addRecipe = true}>
                 <span>Add Recipe</span>
                 <span><i class="fas fa-plus"></i></span>
             </div>
@@ -49,6 +66,13 @@
     {/await}
 {:else}
     <Loading />
+{/if}
+
+{#if addRecipe}
+    <WeeklyPlannerAddRecipe
+        on:add={onAddRecipe}
+        on:close={() => addRecipe = false}
+    />
 {/if}
 
 <style lang="scss">
@@ -111,14 +135,14 @@
         }
     }
 
-    .add-item {
+    .add-recipe-button {
         @include flex($align: center, $justify: space-between);
 
         background: $color-white-dark;
         border-radius: 8px;
         box-sizing: border-box;
         color: $color-grey;
-        font-size: 1.125rem;
+        font-size: 1.25rem;
         font-weight: bold;
         height: 80px;
         max-width: 350px;

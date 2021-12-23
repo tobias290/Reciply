@@ -26,7 +26,7 @@
     const close = () => dispatch("close");
 </script>
 
-<div class="recipe-model" transition:fly="{{ y: document.body.clientHeight, duration: 375, opacity: 1 }}">
+<div class="recipe-model" transition:fly={{ y: document.body.clientHeight, duration: 375, opacity: 1 }}>
     <div class="recipe-header" style="--image: url('{recipe.image_url}')">
         <div class="recipe-header__options">
             <i class="fas fa-chevron-down" on:click={close}></i>

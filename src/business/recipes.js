@@ -84,12 +84,27 @@ export function getWeeklyPlan() {
         if (error)
             return reject(error);
 
-        console.log(data);
-
         resolve(data);
     });
 }
 
-export function addToWeeklyPlan(recipeId, weekday) {
+export async function addToWeeklyPlan(recipeId, weekday) {
+    let { data, error } = await supabase
+        .from("weekly_planner")
+        .insert([{
+            recipe_id: recipeId,
+            day: weekday,
+            user_id: supabase.auth.user().id,
+        }]);
 
+    return !error;
+}
+
+export async function removeFromWeeklyPlan(weeklyPlannerId) {
+    let { data, error } = await supabase
+        .from("weekly_planner")
+        .delete()
+        .match({id: weeklyPlannerId})
+
+    return !error;
 }
