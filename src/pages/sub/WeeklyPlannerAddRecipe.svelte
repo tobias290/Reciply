@@ -6,6 +6,8 @@
     import Loading from "../../components/Loading.svelte";
     import Error from "../../components/Error.svelte";
 
+    export let alreadyAddedRecipes;
+
     const dispatch = createEventDispatcher();
 
     let loadRecipes;
@@ -13,7 +15,9 @@
 
     onMount(async () => loadRecipes = getAllRecipes());
 
-    const filterRecipes = (recipes, searchQuery) => recipes.filter(recipe => recipe.name.includes(searchQuery));
+    const filterRecipes = (recipes, searchQuery) => recipes.filter(recipe =>
+        recipe.name.includes(searchQuery) && !alreadyAddedRecipes.includes(recipe.id)
+    );
 </script>
 
 <div class="add-recipe-modal" transition:fly="{{ y: document.body.clientHeight, duration: 375, opacity: 1 }}">

@@ -61,18 +61,19 @@
                 <span><i class="fas fa-plus"></i></span>
             </div>
         </div>
+
+        {#if addRecipe}
+            <WeeklyPlannerAddRecipe
+                alreadyAddedRecipes={recipes.filter(recipe => recipe.day === activeDay).map(recipe => recipe.recipe.id)}
+                on:add={onAddRecipe}
+                on:close={() => addRecipe = false}
+            />
+        {/if}
     {:catch error}
         <Error>{error.message}</Error>
     {/await}
 {:else}
     <Loading />
-{/if}
-
-{#if addRecipe}
-    <WeeklyPlannerAddRecipe
-        on:add={onAddRecipe}
-        on:close={() => addRecipe = false}
-    />
 {/if}
 
 <style lang="scss">
