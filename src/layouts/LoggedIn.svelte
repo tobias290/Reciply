@@ -25,7 +25,7 @@
         },
     ];
 
-    let active = routes[0];
+    let active = routes[2]; // TODO: Set to 0 for production
 
     let activeRecipe;
 
@@ -49,4 +49,8 @@
 
 <style lang="scss">
     @import "../css/bootstrap";
+
+    :global(main) {
+        padding-bottom: 70px !important;
+    }
 </style>

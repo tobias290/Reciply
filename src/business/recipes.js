@@ -1,5 +1,6 @@
 import { supabase } from "./supabaseClient";
 
+
 /**
  * Gets all the recipes in the database (for the session user).
  *
@@ -60,4 +61,35 @@ export function getRecipeInstructions(recipeId) {
 
         resolve(data);
     });
+}
+
+/**
+ * Fetches the weekly planner for the current authenticated user. (with recipes)
+ *
+ * @returns {Promise<unknown>} - Returns promise fetch the data.
+ */
+export function getWeeklyPlan() {
+    return new Promise(async (resolve, reject) => {
+        let { data, error, status } = await supabase
+            .from("weekly_planner")
+            .select(`
+                id, day, recipe_id, user_id,
+                recipe (
+                    id, name, image_url, 
+                    prep_time, cook_time, serves,
+                    created_at, updated_at
+                )
+            `)
+
+        if (error)
+            return reject(error);
+
+        console.log(data);
+
+        resolve(data);
+    });
+}
+
+export function addToWeeklyPlan(recipeId, weekday) {
+
 }

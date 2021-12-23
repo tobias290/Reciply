@@ -81,14 +81,7 @@
             @include flex($direction: column, $gap: 8px);
 
             &-option {
-                @include flex($center: true);
-
-                background: $color-primary;
-                border-radius: 20px;
-                color: $color-white;
-                font-size: 1rem;
-                height: 30px;
-                width: 30px;
+                @include option;
             }
         }
     }

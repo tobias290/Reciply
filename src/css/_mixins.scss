@@ -81,3 +81,16 @@
     -ms-user-select: $value;
     user-select: $value;
 }
+
+// Components
+
+@mixin option($background: $color-primary, $color: $color-white, $size: 30px, $font-size: 1rem) {
+    @include flex($center: true);
+
+    background: $background;
+    border-radius: $size;
+    color: $color;
+    font-size: $font-size;
+    height: $size;
+    width: $size;
+}
