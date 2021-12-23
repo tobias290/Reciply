@@ -51,6 +51,6 @@
     @import "../css/bootstrap";
 
     :global(main) {
-        padding-bottom: 70px !important;
+        padding-bottom: 90px !important;
     }
 </style>

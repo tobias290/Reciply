@@ -8,7 +8,7 @@
 
     let days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     let activeDay = 0;
-    let addRecipe = true;
+    let addRecipe = false;
     let weeklyPlannerLoader;
 
     onMount(async () => {
@@ -126,7 +126,7 @@
     .recipes {
         @include flex($center: true, $direction: column, $wrap: wrap, $gap: 20px);
 
-        margin: 1.25rem 0;
+        margin-top: 1.25rem;
 
         @include media(750px) {
             align-items: flex-start;

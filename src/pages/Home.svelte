@@ -19,6 +19,8 @@
         <div class="recipes">
             {#each recipes as recipe}
                 <Recipe {recipe} on:click />
+            {:else}
+                <p style="font-size: 1.5rem">No Recipes</p>
             {/each}
         </div>
     {:catch error}
