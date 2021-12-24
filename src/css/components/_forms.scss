@@ -55,7 +55,7 @@
         }
 
         &:hover input:not(:disabled) ~ .form__checkbox__check {
-            background-color: shade($color-white, 10%);
+            border-color: shade(#C4C4C4, 10%);
         }
 
         .form__checkbox__check {
@@ -69,7 +69,7 @@
             width: 20px;
 
             &::after {
-                border: solid $color-white-dark;
+                border: solid $color-white;
                 border-width: 0 2px 2px 0;
                 content: "";
                 display: none;
