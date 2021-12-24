@@ -36,7 +36,7 @@
             <fieldset class="list" class:list--retracted={retractedLists.includes(i)}>
                 <div class="list__header" on:click={() => toggleListView(i)}>
                     <h2>{list.name}</h2>
-                    <span>{list.ingredients.length} items</span>
+                    <span>{list.ingredients.length} {list.ingredients.length > 1 ? "items" : "item"}</span>
                 </div>
                 <div class="list__item-container">
                     {#each list.ingredients as ingredient}
