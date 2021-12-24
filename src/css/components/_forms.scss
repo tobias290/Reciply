@@ -4,6 +4,10 @@
     max-width: 500px;
     width: 100%;
 
+    &--inline {
+        max-width: unset;
+    }
+
     &--center {
         @include center;
     }
@@ -34,5 +38,75 @@
 
         width: 100%;
         -webkit-appearance: none;
+    }
+
+    &__checkbox {
+        cursor: pointer;
+        display: block;
+        padding-left: calc(20px + .5rem);
+        position: relative;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+
+        &.form__checkbox--disabled {
+            cursor: default;
+        }
+
+        &:hover input:not(:disabled) ~ .form__checkbox__check {
+            background-color: shade($color-white, 10%);
+        }
+
+        .form__checkbox__check {
+            border: 2px solid #C4C4C4;
+            border-radius: 4px;
+            box-sizing: border-box;
+            height: 20px;
+            left: 0;
+            position: absolute;
+            top: 0;
+            width: 20px;
+
+            &::after {
+                border: solid $color-white-dark;
+                border-width: 0 2px 2px 0;
+                content: "";
+                display: none;
+                height: 8px;
+                left: 7px;
+                position: absolute;
+                top: 4px;
+                transform: rotate(45deg);
+                width: 4px;
+                -webkit-transform: rotate(45deg);
+                -ms-transform: rotate(45deg);
+            }
+        }
+
+        input {
+            cursor: pointer;
+            height: 0;
+            position: absolute;
+            opacity: 0;
+            width: 0;
+
+            &:disabled:checked ~ .form__checkbox__check {
+                background-color: shade($color-primary, 25%);
+            }
+
+            &:checked ~ .form__checkbox__check {
+                background-color: $color-primary;
+                border: none;
+            }
+
+            &:checked:hover:not(:disabled) ~ .form__checkbox__check {
+                background-color: shade($color-primary, 10%);
+            }
+
+            &:checked ~ .form__checkbox__check::after {
+                display: block;
+            }
+        }
     }
 }
