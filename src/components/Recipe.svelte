@@ -55,6 +55,7 @@
         @include flex($direction: column);
 
         border: 8px;
+        cursor: pointer;
         height: fit-content;
         max-width: 350px;
         width: 100%;

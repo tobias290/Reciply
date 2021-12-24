@@ -13,7 +13,7 @@
     let error;
     let recipesForActiveDay;
 
-    $: recipesForActiveDay = weeklyPlan.filter(recipe => recipe.day === activeDay);
+    $: recipesForActiveDay = weeklyPlan.filter(plan => plan.day === activeDay);
 
     onMount(async () => {
         ({weeklyPlan, error } = await getWeeklyPlan());

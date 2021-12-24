@@ -169,7 +169,7 @@ export async function getShoppingList() {
         }
     }
 
-    shoppingList.push(commonIngredientList);
+    shoppingList.unshift(commonIngredientList);
 
     return {shoppingList: shoppingList.filter(list => list.ingredients.length !== 0), error};
 }

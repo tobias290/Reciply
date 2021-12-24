@@ -1,26 +1,28 @@
 <script>
     import { onMount } from "svelte";
-    import { getWeeklyPlan, getShoppingListRecipeCheckedIngredients } from "../business/recipes";
-    import { sortShoppingLists } from "../helpers/shoppingList";
+    import { getShoppingList } from "../business/recipes";
     import Loading from "../components/Loading.svelte";
     import Error from "../components/Error.svelte";
+    import ProgressBar from "../components/ProgressBar.svelte";
 
     let shoppingList;
-    let checkedIngredients;
     let error;
 
     onMount(async () => {
-        let weeklyPlan;
-        ({weeklyPlan, error} = await getWeeklyPlan());
-        ({checkedIngredients, error} = await getShoppingListRecipeCheckedIngredients());
-        shoppingList = sortShoppingLists(weeklyPlan);
+        ({shoppingList, error} = await getShoppingList());
+
+        console.log(shoppingList);
     });
 </script>
 
 <h1 class="title">Shopping List</h1>
 
-{#if shoppingList && !error}
+<ProgressBar progress={progress} />
 
+{#if shoppingList && !error}
+    {#each shoppingList as list}
+
+    {/each}
 {:else if error}
     <Error>{error.message}</Error>
 {:else}
