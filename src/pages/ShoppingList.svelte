@@ -12,8 +12,6 @@
 
     onMount(async () => {
         ({shoppingList, error} = await getShoppingList());
-
-        console.log(shoppingList);
     });
 
     function toggleListView(index) {
@@ -26,6 +24,13 @@
     }
 
     async function onItemToggle(ingredient) {
+        if (ingredient.checked)
+            shoppingList.checkedItems += 1;
+        else
+            shoppingList.checkedItems -= 1;
+
+        shoppingList = shoppingList;
+
         let error = await checkShoppingListRecipeIngredient(ingredient.id, ingredient.checked);
 
         if (error)
@@ -36,10 +41,16 @@
 <h1 class="title">Shopping List</h1>
 
 {#if shoppingList && !error}
-    <ProgressBar progress={50} />
+    <div class="progress">
+        <div>
+            <span>Progress {shoppingList.checkedItems / shoppingList.items * 100}%</span>
+            <span>{shoppingList.checkedItems} of {shoppingList.items}</span>
+        </div>
+        <ProgressBar progress={shoppingList.checkedItems} max={shoppingList.items} />
+    </div>
 
     <form class="shopping-lists form form--inline">
-        {#each shoppingList as list, i}
+        {#each shoppingList.lists as list, i}
             <fieldset class="list" class:list--retracted={retractedLists.includes(i)}>
                 <div class="list__header" on:click={() => toggleListView(i)}>
                     <h2>{list.name}</h2>
@@ -74,6 +85,21 @@
 <style lang="scss">
     @import "../css/bootstrap";
     @import "../css/components/forms";
+
+    .progress {
+        @include flex($align: center, $direction: column, $gap: 10px);
+
+        margin-bottom: 2rem;
+
+        div {
+            @include flex($align: center, $justify: space-between);
+
+            color: #999;
+            font-size: .875rem;
+            font-weight: 500;
+            width: 100%;
+        }
+    }
 
     .shopping-lists {
         @include flex($align: center, $justify: flex-start, $direction: column, $gap: 20px);

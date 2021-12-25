@@ -124,6 +124,12 @@ export async function getShoppingList() {
 
     let shoppingList = weeklyPlan.map(plan => plan.recipe);
 
+    shoppingList = {
+        lists: shoppingList,
+        items: 0,
+        checkedItems: 0,
+    }
+
     // Add the common list
     let commonIngredientList = {
         name: "Common",
@@ -131,7 +137,7 @@ export async function getShoppingList() {
     };
 
     // Add all the ingredients to the list
-    for (let [i, recipe] of shoppingList.entries()) {
+    for (let [i, recipe] of shoppingList.lists.entries()) {
         let ingredients, error;
 
         ({ingredients, error} = await getRecipeIngredients(recipe.id));
@@ -140,14 +146,19 @@ export async function getShoppingList() {
         recipe.ingredients = ingredients.map(ingredient => {
             let checked = checkedIngredients.find(checked => checked.ingredient_id === ingredient.id);
 
+            if (checked)
+                shoppingList.checkedItems += 1;
+
             return {...ingredient, checked};
         });
+
+        shoppingList.items += recipe.ingredients.length;
 
         // If this is the first loop we have nothing to check against
         if (i === 0)
             continue;
 
-        for (let ingredient of shoppingList.slice(0, i).map(list => list.ingredients).flat()) {
+        for (let ingredient of shoppingList.lists.slice(0, i).map(list => list.ingredients).flat()) {
             // Check each ingredient in all the previously added recipes
             // If any ingredient is also in the current list add it to the common list
             if (recipe.ingredients.map(ingredient => ingredient.name).includes(ingredient.name)) {
@@ -166,9 +177,10 @@ export async function getShoppingList() {
         }
     }
 
-    shoppingList.unshift(commonIngredientList);
+    shoppingList.lists.unshift(commonIngredientList);
+    shoppingList.lists = shoppingList.lists.filter(list => list.ingredients.length !== 0);
 
-    return {shoppingList: shoppingList.filter(list => list.ingredients.length !== 0), error};
+    return {shoppingList, error};
 }
 
 /**

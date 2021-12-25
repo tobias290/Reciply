@@ -2,7 +2,7 @@
     export let progress;
     export let max = 100;
 
-    progress = progress / max * 100;
+    $: progress = progress / max * 100;
 </script>
 
 <div class="progress-bar">
