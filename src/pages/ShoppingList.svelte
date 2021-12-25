@@ -1,6 +1,6 @@
 <script>
     import { onMount } from "svelte";
-    import { getShoppingList } from "../business/recipes";
+    import { getShoppingList, checkShoppingListRecipeIngredient } from "../business/recipes";
     import Loading from "../components/Loading.svelte";
     import Error from "../components/Error.svelte";
     import ProgressBar from "../components/ProgressBar.svelte";
@@ -24,6 +24,13 @@
 
         retractedLists = retractedLists;
     }
+
+    async function onItemToggle(ingredient) {
+        let error = await checkShoppingListRecipeIngredient(ingredient.id, ingredient.checked);
+
+        if (error)
+            console.error(error.message);
+    }
 </script>
 
 <h1 class="title">Shopping List</h1>
@@ -40,19 +47,19 @@
                 </div>
                 <div class="list__item-container">
                     {#each list.ingredients as ingredient}
-                        <div class="list__item">
-                            <label class="form__checkbox">
-                                <input type="checkbox" bind:checked={ingredient.checked} />
-                                <span class="form__checkbox__check"></span>
-                                <span>{ingredient.name}</span>
-                            </label>
-                            <span>
-                                {ingredient.quantity === 0 ? "To Taste" : ingredient.quantity}
-                                {#if ingredient.unit}
-                                    {ingredient.unit}
-                                {/if}
+                        <label class="form__checkbox list__item">
+                            <input type="checkbox" bind:checked={ingredient.checked} on:change={() => onItemToggle(ingredient)} />
+                            <span class="form__checkbox__check"></span>
+                            <span class="list__item-details">
+                                {ingredient.name}
+                                <span>
+                                    {ingredient.quantity === 0 ? "To Taste" : ingredient.quantity}
+                                    {#if ingredient.unit}
+                                        {ingredient.unit}
+                                    {/if}
+                                </span>
                             </span>
-                        </div>
+                        </label>
                     {/each}
                 </div>
             </fieldset>
@@ -117,28 +124,29 @@
         }
 
         &__item {
-            @include flex($align: center, $justify: space-between);
-
             background: $color-white;
             border-radius: 2px;
             box-sizing: border-box;
+            font-size: 1.25rem;
             height: 50px;
-            padding: .75rem;
+            padding: .75rem .75rem .75rem calc(20px + .5rem + .75rem);
             width: 100%;
 
-            & > label {
-                flex-grow: 1;
-                font-size: 1.25rem;
-                height: 100%;
-
-                & > span:first-of-type {
-                    margin-top: 2px;
-                }
+            .form__checkbox__check {
+                left: .75rem;
+                top: 50%;
+                transform: translateY(-50%);
             }
 
-            & > span {
-                color: #999;
-                font-size: .875rem;
+            &-details {
+                @include flex($align: center, $justify: space-between);
+
+                height: 25px;
+
+                & > span {
+                    color: #999;
+                    font-size: .875rem;
+                }
             }
         }
     }

@@ -85,7 +85,7 @@ export async function addToWeeklyPlan(recipeId, weekday) {
             user_id: supabase.auth.user().id,
         }]);
 
-    return !error;
+    return error;
 }
 
 /**
@@ -104,14 +104,11 @@ export async function removeFromWeeklyPlan(weeklyPlannerId) {
     return !error;
 }
 
-export async function getShoppingListRecipeCheckedIngredients() {
-    let { data, error, status } = await supabase
-        .from("shopping_list_checked_ingredients")
-        .select();
-
-    return {checkedIngredients: data, error};
-}
-
+/**
+ * Gets all the recipes in the weekly plan and create a shopping list.
+ *
+ * @returns {Promise<{shoppingList: null, error: {message: string, details: string, hint: string, code: string}}|{shoppingList: *, error: {message: string, details: string, hint: string, code: string}}|{shoppingList: null, error: *}>}
+ */
 export async function getShoppingList() {
     let weeklyPlan, checkedIngredients, error;
 
@@ -174,6 +171,40 @@ export async function getShoppingList() {
     return {shoppingList: shoppingList.filter(list => list.ingredients.length !== 0), error};
 }
 
-export async function checkShoppingListRecipeIngredients(ingredientId) {
+/**
+ * Gets all the shopping list ingredients that have been checked off the shopping list.
+ *
+ * @returns {{checkedIngredients: any[], error: {}}}
+ */
+export async function getShoppingListRecipeCheckedIngredients() {
+    let { data, error, status } = await supabase
+        .from("shopping_list_checked_ingredients")
+        .select();
 
+    return {checkedIngredients: data, error};
+}
+
+/**
+ * Checks or unchecks an item off the shopping list.
+ *
+ * @param {number} ingredientId - ID of the ingredient to update.
+ * @param {boolean} checked - Whether the item is being checked or unchecked.
+ *
+ * @returns {Promise<{message: string, details: string, hint: string, code: string}>}
+ */
+export async function checkShoppingListRecipeIngredient(ingredientId, checked) {
+    let data, error;
+
+    if (checked) {
+        ({ data, error } = await supabase
+            .from("shopping_list_checked_ingredients")
+            .insert([{ ingredient_id: ingredientId }]));
+    } else {
+        ({ data, error } = await supabase
+            .from("shopping_list_checked_ingredients")
+            .delete()
+            .match({ ingredient_id: ingredientId }));
+    }
+
+    return error;
 }
