@@ -43,7 +43,7 @@
 {#if shoppingList && !error}
     <div class="progress">
         <div>
-            <span>Progress {shoppingList.checkedItems / shoppingList.items * 100}%</span>
+            <span>Progress {Math.round((shoppingList.checkedItems / shoppingList.items * 100) * 100) / 100}%</span>
             <span>{shoppingList.checkedItems} of {shoppingList.items}</span>
         </div>
         <ProgressBar progress={shoppingList.checkedItems} max={shoppingList.items} />
