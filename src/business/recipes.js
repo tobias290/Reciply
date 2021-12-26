@@ -217,6 +217,10 @@ export async function getShoppingList() {
 
                     commonList.ingredients[commonIngredientIndex].id.push(ingredient.id);
                     commonList.ingredients[commonIngredientIndex].quantity += ingredient.quantity;
+                    shoppingList.items += 1;
+
+                    if (ingredient.checked)
+                        shoppingList.checkedItems -= 1;
                 } else {
                     // This ingredient isn't in the common list yet
                     commonList.ingredients.push({
@@ -224,10 +228,14 @@ export async function getShoppingList() {
                         id: [originalIngredient.id, ingredient.id],
                         quantity: originalIngredient.quantity + ingredient.quantity
                     });
+
+                    if (ingredient.checked)
+                        shoppingList.checkedItems -= 1;
                 }
 
                 // Remove the ingredient from its own list
                 shoppingList.lists[i].ingredients.splice(k, 1);
+                shoppingList.items -= 1;
 
                 let originalDuplicateIngredient = {
                     recipeIndex: alreadyCheckedRecipeIndexes[originalIndex],
@@ -255,8 +263,10 @@ export async function getShoppingList() {
     }
 
     // Delete the original ingredient of each ingredient included in the common list
-    for (let {recipeIndex, ingredientsIndex} of originalDuplicateIngredients)
+    for (let {recipeIndex, ingredientsIndex} of originalDuplicateIngredients) {
         shoppingList.lists[recipeIndex].ingredients.splice(ingredientsIndex, 1);
+        shoppingList.items -= 1;
+    }
 
     // Only return lists that have ingredients
     shoppingList.lists = shoppingList.lists.filter(list => list.ingredients.length !== 0);
