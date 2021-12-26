@@ -69,7 +69,11 @@
                             <input type="checkbox" bind:checked={ingredient.checked} on:change={() => onItemToggle(ingredient)} />
                             <span class="form__checkbox__check"></span>
                             <span class="list__item-details">
-                                {ingredient.name}
+                                {#if ingredient.checked}
+                                    <s>{ingredient.name}</s>
+                                {:else}
+                                    {ingredient.name}
+                                {/if}
                                 <span>
                                     {ingredient.quantity === 0 ? "To Taste" : ingredient.quantity}
                                     {#if ingredient.unit}
@@ -175,7 +179,12 @@
             &-details {
                 @include flex($align: center, $justify: space-between);
 
-                height: 25px;
+                color: $color-grey;
+                height: 26px;
+
+                & > s {
+                    opacity: .375;
+                }
 
                 & > span {
                     color: #999;
