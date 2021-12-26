@@ -160,7 +160,8 @@
             background: $color-white;
             border-radius: 2px;
             box-sizing: border-box;
-            font-size: 1.25rem;
+            font-size: 1rem;
+            font-weight: 500;
             height: 50px;
             padding: .75rem .75rem .75rem calc(20px + .5rem + .75rem);
             width: 100%;
