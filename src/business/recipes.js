@@ -230,7 +230,7 @@ export async function getShoppingList() {
 
             originalRecipe.ingredients = originalRecipe.ingredients.map(ingredient =>
                 ({...ingredient, quantity: ingredient.quantity + ingredient.quantity})
-            );
+            )
 
             if (originalRecipe.hasOwnProperty("quantity"))
                 originalRecipe.quantity += 1;
@@ -252,6 +252,15 @@ export async function getShoppingList() {
                 shoppingList.checkedItems += 1;
 
             return {...ingredient, checked};
+        }).sort((a, b) => {
+            let nameA = a.name.toUpperCase();
+            let nameB = b.name.toUpperCase();
+
+            if (nameA < nameB)
+                return -1;
+            if (nameA > nameB)
+                return 1;
+            return 0;
         });
 
         shoppingList.items += recipe.ingredients.length;
