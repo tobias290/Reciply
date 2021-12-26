@@ -232,6 +232,11 @@ export async function getShoppingList() {
                 ({...ingredient, quantity: ingredient.quantity + ingredient.quantity})
             );
 
+            if (originalRecipe.hasOwnProperty("quantity"))
+                originalRecipe.quantity += 1;
+            else
+                originalRecipe.quantity = 2;
+
             shoppingList.lists[index] = originalRecipe;
 
             continue;
