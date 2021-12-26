@@ -1,6 +1,7 @@
 <script>
-    import { onMount } from "svelte";
+    import { onMount, onDestroy } from "svelte";
     import { getAllRecipes } from "../business/recipes";
+    import { recipes as recipesStore } from "../stores/homeStore";
     import Recipe from "../components/Recipe.svelte";
     import Loading from "../components/Loading.svelte";
     import Error from "../components/Error.svelte";
@@ -8,7 +9,14 @@
     let recipes, error;
 
     onMount(async () => {
-        ({recipes, error} = await getAllRecipes())
+        if (!$recipesStore)
+            ({recipes, error} = await getAllRecipes())
+        else
+            recipes = $recipesStore;
+    });
+
+    onDestroy(() => {
+        $recipesStore = recipes;
     });
 </script>
 

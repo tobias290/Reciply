@@ -3,7 +3,7 @@
     import { createEventDispatcher } from "svelte";
 
     export let recipe;
-    export let actions;
+    export let actions = [];
 
     const dispatch = createEventDispatcher();
 

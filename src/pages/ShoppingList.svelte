@@ -1,6 +1,7 @@
 <script>
-    import { onMount } from "svelte";
+    import { onMount, onDestroy } from "svelte";
     import { getShoppingList, checkShoppingListRecipeIngredient } from "../business/recipes";
+    import { shoppingList as shoppingListStore, retractedLists as retractedListsStore } from "../stores/shoppingListStore";
     import Loading from "../components/Loading.svelte";
     import Error from "../components/Error.svelte";
     import ProgressBar from "../components/ProgressBar.svelte";
@@ -11,7 +12,12 @@
     let retractedLists = [];
 
     onMount(async () => {
-        ({shoppingList, error} = await getShoppingList());
+        if (!$shoppingListStore)
+            ({shoppingList, error} = await getShoppingList());
+        else
+            shoppingList = $shoppingListStore;
+        
+        retractedLists = $retractedListsStore || [];
     });
 
     function toggleListView(index) {
@@ -43,6 +49,11 @@
         if (error)
             console.error(error.message);
     }
+
+    onDestroy(() => {
+        $shoppingListStore = shoppingList;
+        $retractedListsStore = retractedLists;
+    });
 </script>
 
 <h1 class="title">Shopping List</h1>

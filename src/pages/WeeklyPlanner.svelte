@@ -1,22 +1,25 @@
 <script>
-    import { onMount } from "svelte";
+    import { onMount, onDestroy } from "svelte";
     import { getWeeklyPlan, addToWeeklyPlan, removeFromWeeklyPlan } from "../business/recipes";
+    import { weeklyPlan as weeklyPlanStore, activeDay } from "../stores/weeklyPlannerStore";
     import Loading from "../components/Loading.svelte";
     import Error from "../components/Error.svelte";
     import Recipe from "../components/Recipe.svelte";
     import WeeklyPlannerAddRecipe from "./sub/WeeklyPlannerAddRecipe.svelte";
 
     let days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-    let activeDay = 0;
     let addRecipe = false;
     let weeklyPlan = [];
     let error;
     let recipesForActiveDay;
 
-    $: recipesForActiveDay = weeklyPlan.filter(plan => plan.day === activeDay);
+    $: recipesForActiveDay = weeklyPlan.filter(plan => plan.day === $activeDay);
 
     onMount(async () => {
-        ({weeklyPlan, error } = await getWeeklyPlan());
+        if (!$weeklyPlanStore)
+            ({weeklyPlan, error } = await getWeeklyPlan());
+        else
+            weeklyPlan = $weeklyPlanStore;
     });
 
     async function onRemoveRecipe(weeklyPlannerId) {
@@ -25,17 +28,21 @@
     }
 
     async function onAddRecipe(recipe) {
-        await addToWeeklyPlan(recipe.detail.id, activeDay);
+        await addToWeeklyPlan(recipe.detail.id, $activeDay);
         ({weeklyPlan, error } = await getWeeklyPlan());
         addRecipe = false;
     }
+
+    onDestroy(() => {
+       $weeklyPlanStore = weeklyPlan;
+    });
 </script>
 
 <h1 class="title">Weekly Planner</h1>
 
 <div class="day-picker">
     {#each days as day, i}
-        <div class="day-picker__day" class:day-picker__day--active={activeDay === i} on:click={() => activeDay = i}>
+        <div class="day-picker__day" class:day-picker__day--active={$activeDay === i} on:click={() => $activeDay = i}>
             {day}
         </div>
     {/each}
