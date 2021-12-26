@@ -240,8 +240,16 @@ export async function getShoppingList() {
         let ingredients;
         ({ingredients, error} = await getRecipeIngredients(recipe.id));
 
-        recipe.ingredients = ingredients;
+        recipe.ingredients = ingredients.map(ingredient => {
+            let checked = checkedIngredients.find(checked => checked.ingredient_id === ingredient.id);
 
+            if (checked)
+                shoppingList.checkedItems += 1;
+
+            return {...ingredient, checked};
+        });
+
+        shoppingList.items += recipe.ingredients.length;
         shoppingList.lists.push(recipe);
         shoppingListRecipeIds.push(recipe.id);
     }
@@ -288,8 +296,8 @@ export async function getShoppingList() {
     //     }
     // }
 
-    shoppingList.lists.unshift(commonIngredientList);
-    shoppingList.lists = shoppingList.lists.filter(list => list.ingredients.length !== 0);
+    // shoppingList.lists.unshift(commonIngredientList);
+    // shoppingList.lists = shoppingList.lists.filter(list => list.ingredients.length !== 0);
 
 
     return {shoppingList, error};
