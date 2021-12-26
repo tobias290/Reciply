@@ -104,6 +104,90 @@ export async function removeFromWeeklyPlan(weeklyPlannerId) {
     return !error;
 }
 
+// /**
+//  * Gets all the recipes in the weekly plan and create a shopping list.
+//  *
+//  * @returns {Promise<{shoppingList: null, error: {message: string, details: string, hint: string, code: string}}|{shoppingList: *, error: {message: string, details: string, hint: string, code: string}}|{shoppingList: null, error: *}>}
+//  */
+// export async function getShoppingList() {
+//     let weeklyPlan, checkedIngredients, error;
+//
+//     ({weeklyPlan, error} = await getWeeklyPlan());
+//
+//     if (error)
+//         return {shoppingList: null, error};
+//
+//     ({checkedIngredients, error} = await getShoppingListRecipeCheckedIngredients());
+//
+//     if (error)
+//         return {shoppingList: null, error};
+//
+//     let shoppingList = weeklyPlan.map(plan => plan.recipe);
+//
+//     shoppingList = {
+//         lists: shoppingList,
+//         items: 0,
+//         checkedItems: 0,
+//     }
+//
+//     // Add the common list
+//     let commonIngredientList = {
+//         name: "Common",
+//         ingredients: [],
+//     };
+//
+//     // Add all the ingredients to the list
+//     for (let [i, recipe] of shoppingList.lists.entries()) {
+//         let ingredients, error;
+//
+//         ({ingredients, error} = await getRecipeIngredients(recipe.id));
+//
+//         // Loop over each item and map whether it is checked or not
+//         recipe.ingredients = ingredients.map(ingredient => {
+//             let checked = checkedIngredients.find(checked => checked.ingredient_id === ingredient.id);
+//
+//             if (checked)
+//                 shoppingList.checkedItems += 1;
+//
+//             return {...ingredient, checked};
+//         });
+//
+//         shoppingList.items += recipe.ingredients.length;
+//
+//         // If this is the first loop we have nothing to check against
+//         if (i === 0)
+//             continue;
+//
+//         for (let ingredient of shoppingList.lists.slice(0, i).map(list => list.ingredients).flat()) {
+//             // Check each ingredient in all the previously added recipes
+//             // If any ingredient is also in the current list add it to the common list
+//             if (recipe.ingredients.map(ingredient => ingredient.name).includes(ingredient.name)) {
+//                 if (commonIngredientList.ingredients.map(ingredient => ingredient.name).includes(ingredient.name)) {
+//                     // Already exists update the quantity
+//                     let commonIngredient = commonIngredientList.ingredients.find(commonIngredient => commonIngredient.name === ingredient.name)
+//                     commonIngredient.quantity += ingredient.quantity;
+//
+//                     if (Array.isArray(commonIngredient.id))
+//                         commonIngredient.id.push(ingredient.id);
+//                     else
+//                         commonIngredient.id = [commonIngredient.id, ingredient.id];
+//                 } else {
+//                     // Doesn't exist add it as a new item
+//                     commonIngredientList.ingredients.push(ingredient);
+//                 }
+//
+//                 // Remove any common ingredients the recipe list
+//                 recipe.ingredients = recipe.ingredients.filter(localIngredient => localIngredient.name !== ingredient.name);
+//             }
+//         }
+//     }
+//
+//     shoppingList.lists.unshift(commonIngredientList);
+//     shoppingList.lists = shoppingList.lists.filter(list => list.ingredients.length !== 0);
+//
+//     return {shoppingList, error};
+// }
+
 /**
  * Gets all the recipes in the weekly plan and create a shopping list.
  *
@@ -122,10 +206,10 @@ export async function getShoppingList() {
     if (error)
         return {shoppingList: null, error};
 
-    let shoppingList = weeklyPlan.map(plan => plan.recipe);
+    let recipes = weeklyPlan.map(plan => plan.recipe);
 
-    shoppingList = {
-        lists: shoppingList,
+    let shoppingList = {
+        lists: [],
         items: 0,
         checkedItems: 0,
     }
@@ -136,49 +220,77 @@ export async function getShoppingList() {
         ingredients: [],
     };
 
-    // Add all the ingredients to the list
-    for (let [i, recipe] of shoppingList.lists.entries()) {
-        let ingredients, error;
+    let shoppingListRecipeIds = [];
 
+    // Merge duplicate recipes and update there quantity
+    for (let recipe of recipes) {
+        if (shoppingListRecipeIds.includes(recipe.id)) {
+            let index = shoppingList.lists.findIndex(list => list.id === recipe.id);
+            let originalRecipe = shoppingList.lists[index];
+
+            originalRecipe.ingredients = originalRecipe.ingredients.map(ingredient =>
+                ({...ingredient, quantity: ingredient.quantity + ingredient.quantity})
+            );
+
+            shoppingList.lists[index] = originalRecipe;
+
+            continue;
+        }
+
+        let ingredients;
         ({ingredients, error} = await getRecipeIngredients(recipe.id));
 
-        // Loop over each item and map whether it is checked or not
-        recipe.ingredients = ingredients.map(ingredient => {
-            let checked = checkedIngredients.find(checked => checked.ingredient_id === ingredient.id);
+        recipe.ingredients = ingredients;
 
-            if (checked)
-                shoppingList.checkedItems += 1;
-
-            return {...ingredient, checked};
-        });
-
-        shoppingList.items += recipe.ingredients.length;
-
-        // If this is the first loop we have nothing to check against
-        if (i === 0)
-            continue;
-
-        for (let ingredient of shoppingList.lists.slice(0, i).map(list => list.ingredients).flat()) {
-            // Check each ingredient in all the previously added recipes
-            // If any ingredient is also in the current list add it to the common list
-            if (recipe.ingredients.map(ingredient => ingredient.name).includes(ingredient.name)) {
-                if (commonIngredientList.ingredients.map(ingredient => ingredient.name).includes(ingredient.name)) {
-                    // Already exists update the quantity
-                    let commonIngredient = commonIngredientList.ingredients.find(commonIngredient => commonIngredient.name === ingredient.name)
-                    commonIngredient.quantity += ingredient.quantity;
-                } else {
-                    // Doesn't exist add it as a new item
-                    commonIngredientList.ingredients.push(ingredient);
-                }
-
-                // Remove any common ingredients the recipe list
-                recipe.ingredients = recipe.ingredients.filter(localIngredient => localIngredient.name !== ingredient.name);
-            }
-        }
+        shoppingList.lists.push(recipe);
+        shoppingListRecipeIds.push(recipe.id);
     }
+
+    // // Add all the ingredients to the list
+    // for (let [i, recipe] of shoppingList.lists.entries()) {
+    //     let ingredients, error;
+    //
+    //     ({ingredients, error} = await getRecipeIngredients(recipe.id));
+    //
+    //     // Loop over each item and map whether it is checked or not
+    //     recipe.ingredients = ingredients.map(ingredient => {
+    //         let checked = checkedIngredients.find(checked => checked.ingredient_id === ingredient.id);
+    //
+    //         if (checked)
+    //             shoppingList.checkedItems += 1;
+    //
+    //         return {...ingredient, checked};
+    //     });
+    //
+    //     shoppingList.items += recipe.ingredients.length;
+    //
+    //     // If this is the first loop we have nothing to check against
+    //     if (i === 0)
+    //         continue;
+    //
+    //     for (let ingredient of shoppingList.lists.slice(0, i).map(list => list.ingredients).flat()) {
+    //         // Check each ingredient in all the previously added recipes
+    //         // If any ingredient is also in the current list add it to the common list
+    //         if (recipe.ingredients.map(ingredient => ingredient.name).includes(ingredient.name)) {
+    //             if (commonIngredientList.ingredients.map(ingredient => ingredient.name).includes(ingredient.name)) {
+    //                 // Already exists update the quantity
+    //                 let commonIngredient = commonIngredientList.ingredients.find(commonIngredient => commonIngredient.name === ingredient.name)
+    //                 commonIngredient.quantity += ingredient.quantity;
+    //             } else {
+    //                 // Doesn't exist add it as a new item
+    //                 commonIngredientList.ingredients.push(ingredient);
+    //
+    //             }
+    //
+    //             // Remove any common ingredients the recipe list
+    //             recipe.ingredients = recipe.ingredients.filter(localIngredient => localIngredient.name !== ingredient.name);
+    //         }
+    //     }
+    // }
 
     shoppingList.lists.unshift(commonIngredientList);
     shoppingList.lists = shoppingList.lists.filter(list => list.ingredients.length !== 0);
+
 
     return {shoppingList, error};
 }

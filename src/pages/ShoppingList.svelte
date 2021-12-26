@@ -31,7 +31,14 @@
 
         shoppingList = shoppingList;
 
-        let error = await checkShoppingListRecipeIngredient(ingredient.id, ingredient.checked);
+        let error;
+
+        if (Array.isArray(ingredient.id)) {
+            for (const id of ingredient.id)
+                error = await checkShoppingListRecipeIngredient(id, ingredient.checked);
+        } else {
+            error = await checkShoppingListRecipeIngredient(ingredient.id, ingredient.checked);
+        }
 
         if (error)
             console.error(error.message);
@@ -43,7 +50,7 @@
 {#if shoppingList && !error}
     <div class="progress">
         <div>
-            <span>Progress {Math.round((shoppingList.checkedItems / shoppingList.items * 100) * 100) / 100}%</span>
+            <span>Progress {Math.round(shoppingList.checkedItems / shoppingList.items * 100)}%</span>
             <span>{shoppingList.checkedItems} of {shoppingList.items}</span>
         </div>
         <ProgressBar progress={shoppingList.checkedItems} max={shoppingList.items} />
