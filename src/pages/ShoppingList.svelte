@@ -171,7 +171,7 @@
             box-sizing: border-box;
             font-size: 1rem;
             font-weight: 500;
-            height: 50px;
+            min-height: 50px;
             padding: .75rem .75rem .75rem calc(20px + .5rem + .75rem);
             width: 100%;
 
@@ -194,6 +194,7 @@
                 & > span {
                     color: #999;
                     font-size: .875rem;
+                    text-align: right;
                 }
             }
         }
