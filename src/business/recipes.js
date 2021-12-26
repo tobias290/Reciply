@@ -214,11 +214,11 @@ export async function getShoppingList() {
         checkedItems: 0,
     }
 
-    // Add the common list
-    let commonIngredientList = {
-        name: "Common",
-        ingredients: [],
-    };
+    // // Add the common list
+    // let commonIngredientList = {
+    //     name: "Common",
+    //     ingredients: [],
+    // };
 
     let shoppingListRecipeIds = [];
 
