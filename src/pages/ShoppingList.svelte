@@ -210,4 +210,25 @@
             }
         }
     }
+
+    @include media(600px) {
+        .shopping-lists {
+            align-items: flex-start;
+            flex-direction: row;
+            height: calc(100% - 150px);
+            overflow: auto hidden;
+            margin-bottom: 0;
+
+            .list {
+                max-height: 100%;
+                min-width: 350px;
+                width: 350px;
+
+                .list__item-container {
+                    height: calc(100% - 40px);
+                    overflow: hidden auto;
+                }
+            }
+        }
+    }
 </style>
