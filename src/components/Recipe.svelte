@@ -30,7 +30,7 @@
             </div>
         </div>
         <div class="recipe__options">
-            {#if actions}
+            {#if actions.length > 0}
                 {#each actions as action}
                     <div
                         class="recipe__options-option {action.color ? `recipe__options-option--${action.color}` : ''}"
@@ -80,6 +80,8 @@
         &__info {
             @include flex($direction: column, $gap: 8px);
 
+            color: $color-grey;
+
             h2 {
                 margin: 0;
             }
@@ -94,6 +96,8 @@
 
             &-option {
                 @include option;
+
+                color: $color-white;
 
                 &--green {
                     background: $color-green;
