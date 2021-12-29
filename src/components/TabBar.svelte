@@ -32,7 +32,7 @@
             class:tabs__item--active={active === "settings"}
             on:click={() => tab("settings")}
         ><i class="fas fa-cog"></i></li>
-        <li class="tabs__item tabs__new tabs__new--active"><i class="fas fa-plus"></i></li>
+        <li class="tabs__item tabs__new"><i class="fas fa-plus"></i></li>
     </ul>
 </nav>
 
