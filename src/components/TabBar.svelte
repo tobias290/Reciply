@@ -2,6 +2,7 @@
     import { createEventDispatcher } from "svelte";
 
     export let active;
+    export let addRecipe;
 
     const dispatch = createEventDispatcher();
 
@@ -32,7 +33,11 @@
             class:tabs__item--active={active === "settings"}
             on:click={() => tab("settings")}
         ><i class="fas fa-cog"></i></li>
-        <li class="tabs__item tabs__new"><i class="fas fa-plus"></i></li>
+        <li
+            class="tabs__item tabs__new tabs__new--active"
+            class:tabs__new--active={addRecipe}
+            on:click={() => dispatch("addRecipe")}
+        ><i class="fas fa-plus"></i></li>
     </ul>
 </nav>
 
@@ -80,12 +85,19 @@
             color: $color-white;
             height: 60px;
             margin-left: -20px;
-            transition: background .125s linear, transform .125s linear;
+            transition: background .125s linear;
             width: 60px;
+
+            & > i {
+                transition: transform .125s linear;
+            }
 
             &--active  {
                 background: $color-red;
-                transform: rotate(45deg);
+
+                i {
+                    transform: rotate(45deg);
+                }
             }
         }
     }

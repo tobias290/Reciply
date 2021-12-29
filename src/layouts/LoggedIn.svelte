@@ -5,6 +5,7 @@
     import Settings from "../pages/Settings.svelte";
     import Recipe from "../pages/Recipe.svelte";
     import TabBar from "../components/TabBar.svelte";
+    import AddRecipe from "../pages/AddRecipe.svelte";
 
     let routes = [
         {
@@ -28,6 +29,7 @@
     let active = routes[1]; // TODO: Set to 0 for production
 
     let activeRecipe;
+    let addRecipe = true;
 
     function onTabClick(event) {
         for (let route of routes)
@@ -45,7 +47,16 @@
     <Recipe recipe={activeRecipe} on:close={() => activeRecipe = null} />
 {/if}
 
-<TabBar active={active.name} on:tabClick={onTabClick} />
+{#if addRecipe}
+    <AddRecipe />
+{/if}
+
+<TabBar
+    active={active.name}
+    addRecipe={addRecipe}
+    on:tabClick={onTabClick}
+    on:addRecipe={() => addRecipe = !addRecipe}
+/>
 
 <style lang="scss">
     @import "../css/bootstrap";

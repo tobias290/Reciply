@@ -20,7 +20,7 @@
     );
 </script>
 
-<div class="add-recipe-modal" transition:fly="{{ y: document.body.clientHeight, duration: 375, opacity: 1 }}">
+<div class="weekly-planner-add-recipe-modal" transition:fly="{{ y: document.body.clientHeight, duration: 375, opacity: 1 }}">
     <h1 class="title title--center">Add Recipe</h1>
 
     <button class="close-button" on:click={() => dispatch("close")}><i class="fas fa-times"></i></button>
@@ -84,7 +84,7 @@
         width: 30px;
     }
 
-    .add-recipe-modal {
+    .weekly-planner-add-recipe-modal {
         background: $color-white;
         border-radius: 16px 16px 0 0;
         bottom: 0;
