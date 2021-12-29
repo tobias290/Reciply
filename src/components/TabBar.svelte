@@ -32,7 +32,7 @@
             class:tabs__item--active={active === "settings"}
             on:click={() => tab("settings")}
         ><i class="fas fa-cog"></i></li>
-        <li class="tabs__item tabs__new"><i class="fas fa-plus"></i></li>
+        <li class="tabs__item tabs__new tabs__new--active"><i class="fas fa-plus"></i></li>
     </ul>
 </nav>
 
@@ -80,7 +80,13 @@
             color: $color-white;
             height: 60px;
             margin-left: -20px;
+            transition: background .125s linear, transform .125s linear;
             width: 60px;
+
+            &--active  {
+                background: $color-red;
+                transform: rotate(45deg);
+            }
         }
     }
 </style>
