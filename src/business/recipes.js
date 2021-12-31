@@ -170,8 +170,8 @@ export async function getShoppingList() {
 
             return {...ingredient, checked};
         }).sort((a, b) => {
-            let nameA = a.name.toUpperCase();
-            let nameB = b.name.toUpperCase();
+            let nameA = a.name.toLowerCase();
+            let nameB = b.name.toLowerCase();
 
             if (nameA < nameB)
                 return -1;
@@ -203,16 +203,17 @@ export async function getShoppingList() {
     // Create a common list and remove the ingredients from their own list
     for (let [i, recipe] of shoppingList.lists.entries()) {
         for (let [k, ingredient] of recipe.ingredients.flat().entries()) {
-            if (alreadyCheckedIngredientNames.includes(ingredient.name)) {
+            if (alreadyCheckedIngredientNames.includes(ingredient.name.toLowerCase())) {
                // This is a duplicate ingredients
 
-                let originalIndex = alreadyCheckedIngredientNames.indexOf(ingredient.name);
+                let originalIndex = alreadyCheckedIngredientNames.indexOf(ingredient.name.toLowerCase());
                 let originalIngredient = alreadyCheckedIngredients[originalIndex];
 
-                if (commonListIngredientNames.includes(originalIngredient.name)) {
+
+                if (commonListIngredientNames.includes(originalIngredient.name.toLowerCase())) {
                     // The common list already includes this ingredient
                     let commonIngredientIndex = commonList.ingredients.indexOf(
-                        commonList.ingredients.find(localIngredient => localIngredient.name === originalIngredient.name)
+                        commonList.ingredients.find(localIngredient => localIngredient.name.toLowerCase() === originalIngredient.name.toLowerCase())
                     );
 
                     commonList.ingredients[commonIngredientIndex].id.push(ingredient.id);
@@ -250,14 +251,14 @@ export async function getShoppingList() {
                     originalDuplicateIngredients.push(originalDuplicateIngredient);
 
                 // Add the name of the ingredient in the common list, so we can easily check if an ingredient already exists
-                commonListIngredientNames.push(originalIngredient.name);
+                commonListIngredientNames.push(originalIngredient.name.toLowerCase());
             } else {
                 // This is a new ingredient so save all the details for later
 
                 alreadyCheckedRecipeIndexes.push(i);
                 alreadyCheckedIngredientsIndexes.push(k);
                 alreadyCheckedIngredients.push(ingredient);
-                alreadyCheckedIngredientNames.push(ingredient.name);
+                alreadyCheckedIngredientNames.push(ingredient.name.toLowerCase());
             }
         }
     }
