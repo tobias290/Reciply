@@ -12,6 +12,14 @@
         @include center;
     }
 
+    &__set {
+        @include flex($gap: 10px);
+
+        border: none;
+        margin: 0;
+        padding: 0;
+    }
+
     &__input {
         background: $color-white-dark;
         border-radius: 8px;
@@ -33,11 +41,19 @@
         }
     }
 
+    &__button {
+        @extend .button;
+    }
+
     &__submit {
         @extend .button;
 
         width: 100%;
         -webkit-appearance: none;
+
+        &--green {
+            background: $color-green;
+        }
     }
 
     &__checkbox {

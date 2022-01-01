@@ -66,7 +66,7 @@
         <div class="alert alert--error">{alertError}</div>
     {/if}
 
-    <form class="form" on:submit|preventDefault={onLogIn}>
+    <form class="form form--center" on:submit|preventDefault={onLogIn}>
         <input
             class="form__input"
             type="email"
@@ -103,10 +103,6 @@
         @include flex($align: center, $justify: space-between, $direction: column);
 
         height: 100%;
-    }
-
-    .form {
-        @include center;
     }
 
     .options {

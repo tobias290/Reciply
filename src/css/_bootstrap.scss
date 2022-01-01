@@ -12,15 +12,21 @@
         color: $color-primary;
         content: ".";
         font-weight: bold;
-
     }
 
     &--center {
         text-align: center;
     }
+
+    &--sub {
+        font-size: 1.25rem;
+        margin-bottom: .75rem;
+    }
 }
 
 .button {
+    @include flex($center: true);
+
     background: $color-primary;
     border: none;
     border-radius: 8px;
@@ -28,6 +34,7 @@
     cursor: pointer;
     height: 50px;
     font-weight: bold;
+    text-align: center;
     -webkit-appearance: none;
     width: 100%;
 
