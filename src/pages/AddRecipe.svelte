@@ -4,11 +4,10 @@
     let recipeTitle, image, prepTime, cookTime, serves;
     let ingredients = [];
     let instructions = [];
-
 </script>
 
 <div class="add-recipe-modal" transition:fly={{ y: document.body.clientHeight, duration: 375, opacity: 1 }}>
-    <form class="form">
+    <form class="form form--center">
         <input class="recipe-title-input" placeholder="Recipe Title" />
 
         <input class="form__button" type="button" value="Add Picture" />
