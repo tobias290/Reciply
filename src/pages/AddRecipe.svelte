@@ -1,5 +1,10 @@
 <script>
     import { fly } from "svelte/transition";
+
+    let recipeTitle, image, prepTime, cookTime, serves;
+    let ingredients = [];
+    let instructions = [];
+
 </script>
 
 <div class="add-recipe-modal" transition:fly={{ y: document.body.clientHeight, duration: 375, opacity: 1 }}>
