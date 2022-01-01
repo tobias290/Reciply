@@ -112,6 +112,8 @@
     .options {
         @include flex($align: center, $direction: column, $gap: 10px);
 
+        margin-top: 1rem;
+
         a {
             color: $color-grey;
             cursor: pointer;

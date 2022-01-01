@@ -28,6 +28,8 @@
     cursor: pointer;
     height: 50px;
     font-weight: bold;
+    -webkit-appearance: none;
+    width: 100%;
 
 
     &:hover, &:focus {
