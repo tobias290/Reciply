@@ -67,6 +67,17 @@
             <h2 class="title title--sub">Ingredients</h2>
 
             <!-- Already Added Ingredients -->
+            <div class="ingredients">
+                {#each ingredients as ingredient}
+                    <div class="ingredients__ingredient">
+                        <div>
+                            <strong>{ingredient.quantity > 0 ? ingredient.quantity : "To Taste"} {ingredient.unit}</strong>
+                            <span>{ingredient.name}</span>
+                        </div>
+                        <i class="fas fa-times"></i>
+                    </div>
+                {/each}
+            </div>
 
             <!-- Add Ingredient Form -->
             {#if showIngredientForm}
@@ -148,6 +159,29 @@
         &:focus {
             border-color: $color-primary;
             outline: none;
+        }
+    }
+
+    .ingredients {
+        @include flex($align: center, $justify: flex-start, $gap: 8px);
+
+        margin-bottom: .5rem;
+
+        &__ingredient {
+            @include flex($align: center, $gap: 5px);
+
+            background: $color-white-dark;
+            border-radius: 4px;
+            box-sizing: border-box;
+            color: $color-grey;
+            font-size: .75rem;
+            height: 25px;
+            padding: 5px;
+            width: fit-content;
+
+            i {
+                margin-left: 5px;
+            }
         }
     }
 </style>
