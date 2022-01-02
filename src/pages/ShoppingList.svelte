@@ -80,20 +80,20 @@
                     <span>{list.ingredients.length} {list.ingredients.length > 1 ? "items" : "item"}</span>
                 </div>
                 <div class="list__item-container">
-                    {#each list.ingredients as ingredient}
+                    {#each list.ingredients as { name, quantity, unit, checked }, i}
                         <label class="form__checkbox list__item">
-                            <input type="checkbox" bind:checked={ingredient.checked} on:change={() => onItemToggle(ingredient)} />
+                            <input type="checkbox" bind:checked={checked} on:change={() => onItemToggle(list.ingredients[i])} />
                             <span class="form__checkbox__check"></span>
                             <span class="list__item-details">
-                                {#if ingredient.checked}
-                                    <s>{ingredient.name}</s>
+                                {#if checked}
+                                    <s>{name}</s>
                                 {:else}
-                                    {ingredient.name}
+                                    {name}
                                 {/if}
                                 <span>
-                                    {ingredient.quantity === 0 ? "To Taste" : ingredient.quantity}
-                                    {#if ingredient.unit}
-                                        {ingredient.unit}
+                                    {quantity === 0 ? "To Taste" : quantity}
+                                    {#if unit}
+                                        {unit}
                                     {/if}
                                 </span>
                             </span>
