@@ -1,13 +1,17 @@
 <script>
     import { fly } from "svelte/transition";
+    import Instruction from "../components/Instruction.svelte";
 
     let title, image, prepTime, cookTime, serves;
-    let ingredients = [];
-    let instructions = [];
+    let ingredients = [{name: "Olive Oil", quantity: 2, unit: "tbsp"}];
+    let instructions = [{step: 1, instruction: "Sprinkle over the flour and cook for a further 2-3 minutes. Add the garlic and all the vegetables and fry for 1-2 minutes."}];
 
     let name, quantity, unit, details;
 
     let instruction;
+
+    let updateIngredientIndex;
+    let updateInstructionIndex;
 
     let showIngredientForm = false;
     let showInstructionForm = false;
@@ -18,9 +22,20 @@
             return;
         }
 
-        ingredients.push({
-            name, quantity, unit, details,
-        });
+        let newIngredient = {
+            name, quantity: parseInt(quantity), unit: unit.toLowerCase(), details,
+        };
+
+        console.log(updateIngredientIndex);
+
+        if (updateIngredientIndex === null) {
+            ingredients.push(newIngredient);
+        } else {
+            ingredients[updateIngredientIndex] = newIngredient;
+            updateIngredientIndex = null;
+        }
+
+        ingredients = ingredients;
 
         name = null;
         quantity  = null;
@@ -28,6 +43,23 @@
         details = null;
 
         showIngredientForm = false;
+    }
+
+    function updateIngredient(i) {
+        updateIngredientIndex = i;
+
+        name = ingredients[i].name;
+        quantity  = ingredients[i].quantity;
+        unit  = ingredients[i].unit;
+        details = ingredients[i].details;
+
+        showIngredientForm = true;
+    }
+
+    function removeIngredient(i) {
+        ingredients.splice(i, 1);
+
+        ingredients = ingredients;
     }
 
     function addInstruction() {
@@ -66,20 +98,18 @@
         <fieldset class="reset">
             <h2 class="title title--sub">Ingredients</h2>
 
-            <!-- Already Added Ingredients -->
             <div class="ingredients">
-                {#each ingredients as ingredient}
-                    <div class="ingredients__ingredient">
+                {#each ingredients as { name, quantity, unit }, i}
+                    <div class="ingredients__ingredient" on:click={() => updateIngredient(i)}>
                         <div>
-                            <strong>{ingredient.quantity > 0 ? ingredient.quantity : "To Taste"} {ingredient.unit}</strong>
-                            <span>{ingredient.name}</span>
+                            <strong>{quantity > 0 ? quantity : "To Taste"} {unit}</strong>
+                            <span>{name}</span>
                         </div>
-                        <i class="fas fa-times"></i>
+                        <i class="fas fa-times" on:click|stopPropagation={() => removeIngredient(i)}></i>
                     </div>
                 {/each}
             </div>
 
-            <!-- Add Ingredient Form -->
             {#if showIngredientForm}
                 <fieldset class="form__set">
                     <input class="form__input" type="text" placeholder="Quantity" bind:value={quantity} />
@@ -90,15 +120,23 @@
                 <input class="form__input" type="text" placeholder="Details" bind:value={details} />
             {/if}
 
-            <input class="form__button" type="button" value="Add Ingredient" on:click={addIngredient} />
+            <input
+                class="form__button"
+                type="button"
+                value="{updateIngredientIndex != null ? 'Edit' : 'Add'} Ingredient"
+                on:click={addIngredient}
+            />
         </fieldset>
 
         <fieldset class="reset">
             <h2 class="title title--sub">Instructions</h2>
 
-            <!-- Already Added Instructions -->
+            <div class="instructions">
+                {#each instructions as instruction}
+                    <Instruction {...instruction} />
+                {/each}
+            </div>
 
-            <!-- Add Instruction Form -->
 
             {#if showInstructionForm}
                 <textarea
@@ -163,7 +201,7 @@
     }
 
     .ingredients {
-        @include flex($align: center, $justify: flex-start, $gap: 8px);
+        @include flex($align: center, $justify: flex-start, $wrap: wrap, $gap: 8px);
 
         margin-bottom: .5rem;
 
@@ -183,5 +221,11 @@
                 margin-left: 5px;
             }
         }
+    }
+
+    .instructions {
+        @include flex($direction: column, $gap: 8px);
+
+        margin-bottom: .5rem;
     }
 </style>
