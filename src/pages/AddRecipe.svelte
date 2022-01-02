@@ -138,7 +138,7 @@
         width: 100%;
 
         &::placeholder {
-            color: tint($color-grey, 10%);
+            color: tint($color-grey, 30%);
         }
 
         &:hover {
