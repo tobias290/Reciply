@@ -23,12 +23,11 @@
         }
 
         let newIngredient = {
-            name, quantity: parseInt(quantity), unit: unit.toLowerCase(), details,
+            name, quantity: parseInt(quantity), unit: unit ? unit.toLowerCase() : "", details,
         };
 
-        console.log(updateIngredientIndex);
-
-        if (updateIngredientIndex === null) {
+        if (updateIngredientIndex === null || updateIngredientIndex === undefined) {
+            console.log("HERE");
             ingredients.push(newIngredient);
         } else {
             ingredients[updateIngredientIndex] = newIngredient;
