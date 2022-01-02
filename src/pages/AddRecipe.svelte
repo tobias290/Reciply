@@ -1,14 +1,55 @@
 <script>
     import { fly } from "svelte/transition";
 
-    let recipeTitle, image, prepTime, cookTime, serves;
+    let title, image, prepTime, cookTime, serves;
     let ingredients = [];
     let instructions = [];
+
+    let name, quantity, unit, details;
+
+    let instruction;
+
+    let showIngredientForm = false;
+    let showInstructionForm = false;
+
+    function addIngredient() {
+        if (!showIngredientForm) {
+            showIngredientForm = true;
+            return;
+        }
+
+        ingredients.push({
+            name, quantity, unit, details,
+        });
+
+        name = null;
+        quantity  = null;
+        unit  = null;
+        details = null;
+
+        showIngredientForm = false;
+    }
+
+    function addInstruction() {
+        if (!showInstructionForm) {
+            showInstructionForm = true;
+            return;
+        }
+
+        instructions.push({
+            step: instruction.length + 1,
+            instruction,
+        });
+
+        instruction = null;
+
+        showInstructionForm = false;
+    }
 </script>
 
 <div class="add-recipe-modal" transition:fly={{ y: document.body.clientHeight, duration: 375, opacity: 1 }}>
     <form class="form form--center">
-        <input class="recipe-title-input" placeholder="Recipe Title" />
+        <input class="recipe-title-input" placeholder="Recipe Title" bind:value={title} />
 
         <input class="form__button" type="button" value="Add Picture" />
 
@@ -16,28 +57,47 @@
             <h2 class="title title--sub">Details</h2>
 
             <fieldset class="form__set">
-                <input class="form__input" type="text" placeholder="Prep Time (mins)" />
-                <input class="form__input" type="text" placeholder="Cook Time (mins)" />
+                <input class="form__input" type="text" placeholder="Prep Time (mins)" bind:value={prepTime} />
+                <input class="form__input" type="text" placeholder="Cook Time (mins)" bind:value={cookTime} />
             </fieldset>
-            <input class="form__input" type="text" placeholder="Serves" />
+            <input class="form__input" type="text" placeholder="Serves" bind:value={serves} />
         </fieldset>
 
         <fieldset class="reset">
             <h2 class="title title--sub">Ingredients</h2>
 
             <!-- Already Added Ingredients -->
-            <!-- Add Ingredient Form -->
 
-            <input class="form__button" type="button" value="Add Ingredient" />
+            <!-- Add Ingredient Form -->
+            {#if showIngredientForm}
+                <fieldset class="form__set">
+                    <input class="form__input" type="text" placeholder="Quantity" bind:value={quantity} />
+                    <input class="form__input" type="text" placeholder="Unit" bind:value={unit} />
+                </fieldset>
+
+                <input class="form__input" type="text" placeholder="Name" bind:value={name} />
+                <input class="form__input" type="text" placeholder="Details" bind:value={details} />
+            {/if}
+
+            <input class="form__button" type="button" value="Add Ingredient" on:click={addIngredient} />
         </fieldset>
 
         <fieldset class="reset">
             <h2 class="title title--sub">Instructions</h2>
 
             <!-- Already Added Instructions -->
+
             <!-- Add Instruction Form -->
 
-            <input class="form__button" type="button" value="Add Instruction" />
+            {#if showInstructionForm}
+                <textarea
+                    class="form__textarea"
+                    placeholder="Step {instructions.length + 1} instructions..."
+                    bind:value={instruction}
+                ></textarea>
+            {/if}
+
+            <input class="form__button" type="button" value="Add Instruction" on:click={addInstruction} />
         </fieldset>
 
         <input class="form__submit form__submit--green" value="Save Recipe" />

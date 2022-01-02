@@ -38,6 +38,13 @@
         }
     }
 
+    &__textarea {
+        @extend .form__input;
+
+        height: 125px;
+        padding: .875rem;
+    }
+
     &__error {
         color: $color-error;
         font-size: .75rem;
