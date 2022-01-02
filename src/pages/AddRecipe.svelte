@@ -27,7 +27,6 @@
         };
 
         if (updateIngredientIndex === null || updateIngredientIndex === undefined) {
-            console.log("HERE");
             ingredients.push(newIngredient);
         } else {
             ingredients[updateIngredientIndex] = newIngredient;
