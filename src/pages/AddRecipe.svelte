@@ -107,7 +107,10 @@
             <img class="image-preview" bind:this={imagePreview} height="150" width="300" />
         {/if}
 
-        <input type="file" bind:this={image} on:change={onImageChange} />
+        <label class="form__file">
+            <input type="file" bind:this={image} on:change={onImageChange} />
+            {showImage ? "Edit" : "Add"} Image
+        </label>
 
         <fieldset class="reset">
             <h2 class="title title--sub">Details</h2>

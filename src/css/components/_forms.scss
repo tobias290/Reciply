@@ -38,6 +38,14 @@
         }
     }
 
+    &__file {
+        @extend .form__button;
+
+        input[type="file"] {
+            display: none;
+        }
+    }
+
     &__textarea {
         @extend .form__input;
 
