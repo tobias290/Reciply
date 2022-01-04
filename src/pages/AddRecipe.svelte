@@ -2,6 +2,8 @@
     import { fly } from "svelte/transition";
     import Instruction from "../components/Instruction.svelte";
 
+    let showImage, imagePreview;
+
     let title, image, prepTime, cookTime, serves;
     let ingredients = [{name: "Olive Oil", quantity: 2, unit: "tbsp"}];
     let instructions = [{step: 1, instruction: "Sprinkle over the flour and cook for a further 2-3 minutes. Add the garlic and all the vegetables and fry for 1-2 minutes."}];
@@ -15,6 +17,26 @@
 
     let showIngredientForm = false;
     let showInstructionForm = false;
+
+    function onImageChange() {
+        const file = image.files[0];
+
+        if (file) {
+            showImage = true;
+
+            const reader = new FileReader();
+
+            reader.addEventListener("load", () => {
+                imagePreview.setAttribute("src", reader.result);
+                imagePreview.setAttribute("alt", file.name);
+            });
+            reader.readAsDataURL(file);
+
+            return;
+        }
+
+        showImage = false;
+    }
 
     function addIngredient() {
         if (!showIngredientForm) {
@@ -81,7 +103,11 @@
     <form class="form form--center">
         <input class="recipe-title-input" placeholder="Recipe Title" bind:value={title} />
 
-        <input class="form__button" type="button" value="Add Picture" />
+        {#if showImage}
+            <img class="image-preview" bind:this={imagePreview} height="150" width="300" />
+        {/if}
+
+        <input type="file" bind:this={image} on:change={onImageChange} />
 
         <fieldset class="reset">
             <h2 class="title title--sub">Details</h2>
@@ -196,6 +222,15 @@
             border-color: $color-primary;
             outline: none;
         }
+    }
+
+    .image-preview {
+        @include center;
+
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        object-fit: cover;
+        width: 100%;
     }
 
     .ingredients {
