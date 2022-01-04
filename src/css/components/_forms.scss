@@ -65,6 +65,14 @@
 
     &__button {
         @extend .button;
+
+        &--green {
+            background: $color-green;
+        }
+
+        &--red{
+            background: $color-red;
+        }
     }
 
     &__submit {

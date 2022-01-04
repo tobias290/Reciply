@@ -1,25 +1,26 @@
 <script>
-    import { onMount } from "svelte";
+    import { onMount, createEventDispatcher } from "svelte";
 
     export let step;
     export let instruction;
+    export let open = true;
 
+    let dispatch = createEventDispatcher();
     let container;
-    let open = true;
 
     onMount(() =>{
 
     });
 
-    function toggle() {
+    const toggle = () => {
         open = !open;
     }
 </script>
 
-<div class="instruction" class:instruction--closed={!open} bind:this={container}  on:click={toggle}>
+<div class="instruction" class:instruction--closed={!open} bind:this={container} on:click>
     <div class="instruction__step">
         <strong>Step {step}</strong>
-        <span><i class="fas fa-chevron-up instruction__icon"></i></span>
+        <span class="instruction__icon" on:click|stopPropagation={toggle}><i class="fas fa-chevron-up"></i></span>
     </div>
     <div class="instruction__instruction">{instruction}</div>
 </div>
@@ -57,12 +58,10 @@
                 font-size: 1.125rem;
             }
 
-            span {
+            .instruction__icon {
                 @include option($size: 20px, $font-size: .75rem);
 
-                .instruction__icon {
-                    transition: transform .175s linear;
-                }
+                transition: transform .175s linear;
             }
         }
 

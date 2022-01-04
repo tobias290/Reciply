@@ -6,14 +6,17 @@
 
     let title, image, prepTime, cookTime, serves;
     let ingredients = [{name: "Olive Oil", quantity: 2, unit: "tbsp"}];
-    let instructions = [{step: 1, instruction: "Sprinkle over the flour and cook for a further 2-3 minutes. Add the garlic and all the vegetables and fry for 1-2 minutes."}];
+    let instructions = [
+        {step: 1, instruction: "Sprinkle over the flour and cook for a further 2-3 minutes. Add the garlic and all the vegetables and fry for 1-2 minutes."},
+        {step: 2, instruction: "Sprinkle over the flour and cook for a further 2-3 minutes. Add the garlic and all the vegetables and fry for 1-2 minutes."}
+    ];
 
     let name, quantity, unit, details;
 
     let instruction;
 
-    let updateIngredientIndex;
-    let updateInstructionIndex;
+    let updateIngredientIndex = null;
+    let updateInstructionIndex = null;
 
     let showIngredientForm = false;
     let showInstructionForm = false;
@@ -48,7 +51,7 @@
             name, quantity: parseInt(quantity), unit: unit ? unit.toLowerCase() : "", details,
         };
 
-        if (updateIngredientIndex === null || updateIngredientIndex === undefined) {
+        if (updateIngredientIndex === null) {
             ingredients.push(newIngredient);
         } else {
             ingredients[updateIngredientIndex] = newIngredient;
@@ -88,13 +91,40 @@
             return;
         }
 
-        instructions.push({
-            step: instruction.length + 1,
-            instruction,
-        });
+        if (updateIngredientIndex !== null) {
+            instructions[updateInstructionIndex].instruction = instruction;
+            updateInstructionIndex = null;
+        } else {
+            instructions.push({
+                step: instructions.length + 1,
+                instruction,
+            });
+        }
+
+        instructions = instructions;
 
         instruction = null;
 
+        showInstructionForm = false;
+    }
+
+    function updateInstruction(i) {
+        updateInstructionIndex = i;
+
+        instruction = instructions[i].instruction;
+
+        showInstructionForm = true;
+    }
+
+    function removeInstruction(i) {
+        instructions.splice(i, 1);
+
+        for (let [i, instruction] of instructions.entries())
+            instruction.step = i + 1;
+
+        instructions = instructions;
+
+        updateInstructionIndex = null;
         showInstructionForm = false;
     }
 </script>
@@ -150,7 +180,7 @@
             <input
                 class="form__button"
                 type="button"
-                value="{updateIngredientIndex != null ? 'Edit' : 'Add'} Ingredient"
+                value="{updateIngredientIndex !== null ? 'Edit' : 'Add'} Ingredient"
                 on:click={addIngredient}
             />
         </fieldset>
@@ -159,8 +189,12 @@
             <h2 class="title title--sub">Instructions</h2>
 
             <div class="instructions">
-                {#each instructions as instruction}
-                    <Instruction {...instruction} />
+                {#each instructions as instruction, i}
+                    <Instruction
+                        {...instruction}
+                        open={i === instructions.length - 1}
+                        on:click={() => updateInstruction(i)}
+                    />
                 {/each}
             </div>
 
@@ -168,12 +202,17 @@
             {#if showInstructionForm}
                 <textarea
                     class="form__textarea"
-                    placeholder="Step {instructions.length + 1} instructions..."
+                    placeholder="Step {(updateInstructionIndex !== null ? updateInstructionIndex : instructions.length) + 1} instructions..."
                     bind:value={instruction}
                 ></textarea>
             {/if}
 
-            <input class="form__button" type="button" value="Add Instruction" on:click={addInstruction} />
+            <input class="form__button" type="button" value="{updateInstructionIndex !== null ? 'Edit' : 'Add'} Instruction" on:click={addInstruction} />
+
+            {#if showInstructionForm && updateInstructionIndex != null}
+                <input class="form__button form__button--red" type="button" value="Delete Instruction" on:click={removeInstruction} />
+                <br />
+            {/if}
         </fieldset>
 
         <input class="form__submit form__submit--green" value="Save Recipe" />
