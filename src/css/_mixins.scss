@@ -41,14 +41,26 @@
     }
 }
 
-@mixin media($screen-size: 700px, $height: false) {
+@mixin media($screen-size: 700px, $height: false, $less-than: false) {
     @if($height) {
-        @media only screen and (min-height: $screen-size) {
-            @content;
+        @if ($less-than) {
+            @media only screen and (max-height: $screen-size) {
+                @content;
+            }
+        } @else {
+            @media only screen and (min-height: $screen-size) {
+                @content;
+            }
         }
     } @else {
-        @media only screen and (min-width: $screen-size) {
-            @content;
+        @if ($less-than) {
+            @media only screen and (max-width: $screen-size) {
+                @content;
+            }
+        } @else {
+            @media only screen and (min-width: $screen-size) {
+                @content;
+            }
         }
     }
 }

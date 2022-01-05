@@ -172,4 +172,10 @@
             }
         }
     }
+
+    @include media(325px, $less-than: true) {
+        &__set  {
+            flex-direction: column;
+        }
+    }
 }
