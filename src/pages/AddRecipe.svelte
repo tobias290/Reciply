@@ -1,5 +1,6 @@
 <script>
     import { fly } from "svelte/transition";
+    import { saveRecipe } from "../business/recipes";
     import Instruction from "../components/Instruction.svelte";
 
     let showImage, imagePreview;
@@ -12,7 +13,6 @@
     ];
 
     let name, quantity, unit, details;
-
     let instruction;
 
     let updateIngredientIndex = null;
@@ -127,9 +127,19 @@
         updateInstructionIndex = null;
         showInstructionForm = false;
     }
+
+    async function onSaveRecipe() {
+        // Validation here...
+
+        let recipe = {
+            title, image, prepTime, cookTime, serves
+        };
+
+        await saveRecipe(recipe, ingredients, instructions);
+    }
 </script>
 
-<div class="add-recipe-modal" transition:fly={{ y: document.body.clientHeight, duration: 375, opacity: 1 }}>
+<div class="add-recipe-modal" transition:fly={{ y: document.body.clientHeight, duration: 375, opacity: 1 }} on:submit|preventDefault={onSaveRecipe}>
     <form class="form form--center">
         <input class="recipe-title-input" placeholder="Recipe Title" bind:value={title} />
 
