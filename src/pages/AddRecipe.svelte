@@ -58,7 +58,7 @@
 
         let errorsOccurred = false;
 
-        for (let [key, part] of Object.entries(newIngredient)) {
+        for (let [key, part] of Object.entries({name, quantity: parseInt(quantity) })) {
             if (!validateValue(part))  {
                 errors[key] = ["Cannot be empty"];
                 errorsOccurred = true;
@@ -174,8 +174,6 @@
         // Validation here...
         if (!validate()) return;
 
-
-
         let recipe = {
             title, image, prepTime, cookTime, serves
         };
@@ -186,7 +184,7 @@
 
 <div class="add-recipe-modal" transition:fly={{ y: document.body.clientHeight, duration: 375, opacity: 1 }} on:submit|preventDefault={onSaveRecipe}>
     <form class="form form--center" on:submit|preventDefault={onSaveRecipe}>
-        <input class="recipe-title-input" placeholder="Recipe Title" bind:value={title} />
+        <input class="recipe-title-input" placeholder="Recipe Title" bind:value={title} required />
         <InputErrors errors={errors.title || []} />
 
         {#if showImage}
@@ -194,7 +192,7 @@
         {/if}
 
         <label class="form__file">
-            <input type="file" bind:this={image} on:change={onImageChange} />
+            <input type="file" bind:this={image} on:change={onImageChange} required />
             {showImage ? "Edit" : "Add"} Image
         </label>
 
@@ -203,11 +201,11 @@
 
             <fieldset class="form__set">
                 <div class="form__field">
-                    <input class="form__input" type="text" placeholder="Prep Time (mins)" bind:value={prepTime} />
+                    <input class="form__input" type="text" placeholder="Prep Time (mins)" bind:value={prepTime} required />
                     <InputErrors errors={errors.prepTime || []} />
                 </div>
                 <div class="form__field">
-                    <input class="form__input" type="text" placeholder="Cook Time (mins)" bind:value={cookTime} />
+                    <input class="form__input" type="text" placeholder="Cook Time (mins)" bind:value={cookTime} required />
                     <InputErrors errors={errors.cookTime || []} />
                 </div>
             </fieldset>
@@ -233,7 +231,7 @@
             {#if showIngredientForm}
                 <fieldset class="form__set">
                     <div class="form__field">
-                        <input class="form__input" type="number" min="0" placeholder="Quantity" bind:value={quantity} />
+                        <input class="form__input" type="number" min="0" placeholder="Quantity" bind:value={quantity} required />
                         <InputErrors errors={errors.quantity || []} />
                     </div>
                     <div class="form__field">
@@ -242,7 +240,7 @@
                     </div>
                 </fieldset>
 
-                <input class="form__input" type="text" placeholder="Name" bind:value={name} />
+                <input class="form__input" type="text" placeholder="Name" bind:value={name} required />
                 <InputErrors errors={errors.name || []} />
 
                 <input class="form__input" type="text" placeholder="Details" bind:value={details} />
@@ -276,6 +274,7 @@
                     class="form__textarea"
                     placeholder="Step {(updateInstructionIndex !== null ? updateInstructionIndex : instructions.length) + 1} instructions..."
                     bind:value={instruction}
+                    required
                 ></textarea>
                 <InputErrors errors={errors.instruction || []} />
             {/if}
