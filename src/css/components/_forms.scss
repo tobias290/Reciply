@@ -18,6 +18,15 @@
         border: none;
         margin: 0;
         padding: 0;
+
+        & > * {
+            flex-grow: 1;
+        }
+    }
+
+    &__field {
+        @include flex($direction: column, $gap: 10px);
+
     }
 
     &__input {
@@ -68,10 +77,18 @@
 
         &--green {
             background: $color-green;
+
+            &:hover, &:focus {
+                background: shade($color-green, 5%);
+            }
         }
 
         &--red{
             background: $color-red;
+
+            &:hover, &:focus {
+                background: shade($color-red, 5%);
+            }
         }
     }
 

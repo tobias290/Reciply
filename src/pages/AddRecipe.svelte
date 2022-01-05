@@ -2,6 +2,7 @@
     import { fly } from "svelte/transition";
     import { saveRecipe } from "../business/recipes";
     import Instruction from "../components/Instruction.svelte";
+    import InputErrors from "../components/InputErrors.svelte";
 
     let showImage, imagePreview;
 
@@ -20,6 +21,10 @@
 
     let showIngredientForm = false;
     let showInstructionForm = false;
+
+    let errors = {};
+
+    const validateValue = (value) => value !== "" && value !== null && value !== undefined && !isNaN(value)
 
     function onImageChange() {
         const file = image.files[0];
@@ -50,6 +55,19 @@
         let newIngredient = {
             name, quantity: parseInt(quantity), unit: unit ? unit.toLowerCase() : "", details,
         };
+
+        let errorsOccurred = false;
+
+        for (let [key, part] of Object.entries(newIngredient)) {
+            if (!validateValue(part))  {
+                errors[key] = ["Cannot be empty"];
+                errorsOccurred = true;
+            }
+        }
+
+        console.log(newIngredient);
+
+        if (errorsOccurred) return;
 
         if (updateIngredientIndex === null) {
             ingredients.push(newIngredient);
@@ -91,6 +109,11 @@
             return;
         }
 
+        if (!validateValue(instruction)) {
+            errors.instruction = ["Cannot be empty"];
+            return;
+        }
+
         if (updateIngredientIndex !== null) {
             instructions[updateInstructionIndex].instruction = instruction;
             updateInstructionIndex = null;
@@ -128,8 +151,30 @@
         showInstructionForm = false;
     }
 
+    function validate() {
+        let errorsOccurred = false;
+
+        let recipe = {
+            title, image, prepTime, cookTime, serves
+        };
+
+        for (let [key, part] of Object.entries(recipe)) {
+            if (!validateValue(part))  {
+                errors[key] = ["Cannot be empty"];
+                errorsOccurred = true;
+            }
+        }
+
+        errors = errors;
+
+        return !errorsOccurred;
+    }
+
     async function onSaveRecipe() {
         // Validation here...
+        if (!validate()) return;
+
+
 
         let recipe = {
             title, image, prepTime, cookTime, serves
@@ -140,8 +185,9 @@
 </script>
 
 <div class="add-recipe-modal" transition:fly={{ y: document.body.clientHeight, duration: 375, opacity: 1 }} on:submit|preventDefault={onSaveRecipe}>
-    <form class="form form--center">
+    <form class="form form--center" on:submit|preventDefault={onSaveRecipe}>
         <input class="recipe-title-input" placeholder="Recipe Title" bind:value={title} />
+        <InputErrors errors={errors.title || []} />
 
         {#if showImage}
             <img class="image-preview" bind:this={imagePreview} height="150" width="300" />
@@ -156,10 +202,17 @@
             <h2 class="title title--sub">Details</h2>
 
             <fieldset class="form__set">
-                <input class="form__input" type="text" placeholder="Prep Time (mins)" bind:value={prepTime} />
-                <input class="form__input" type="text" placeholder="Cook Time (mins)" bind:value={cookTime} />
+                <div class="form__field">
+                    <input class="form__input" type="text" placeholder="Prep Time (mins)" bind:value={prepTime} />
+                    <InputErrors errors={errors.prepTime || []} />
+                </div>
+                <div class="form__field">
+                    <input class="form__input" type="text" placeholder="Cook Time (mins)" bind:value={cookTime} />
+                    <InputErrors errors={errors.cookTime || []} />
+                </div>
             </fieldset>
             <input class="form__input" type="text" placeholder="Serves" bind:value={serves} />
+            <InputErrors errors={errors.serves || []} />
         </fieldset>
 
         <fieldset class="reset">
@@ -179,12 +232,21 @@
 
             {#if showIngredientForm}
                 <fieldset class="form__set">
-                    <input class="form__input" type="text" placeholder="Quantity" bind:value={quantity} />
-                    <input class="form__input" type="text" placeholder="Unit" bind:value={unit} />
+                    <div class="form__field">
+                        <input class="form__input" type="number" min="0" placeholder="Quantity" bind:value={quantity} />
+                        <InputErrors errors={errors.quantity || []} />
+                    </div>
+                    <div class="form__field">
+                        <input class="form__input" type="text" placeholder="Unit" bind:value={unit} />
+                        <InputErrors errors={errors.unit || []} />
+                    </div>
                 </fieldset>
 
                 <input class="form__input" type="text" placeholder="Name" bind:value={name} />
+                <InputErrors errors={errors.name || []} />
+
                 <input class="form__input" type="text" placeholder="Details" bind:value={details} />
+                <InputErrors errors={errors.details || []} />
             {/if}
 
             <input
@@ -215,6 +277,7 @@
                     placeholder="Step {(updateInstructionIndex !== null ? updateInstructionIndex : instructions.length) + 1} instructions..."
                     bind:value={instruction}
                 ></textarea>
+                <InputErrors errors={errors.instruction || []} />
             {/if}
 
             <input class="form__button" type="button" value="{updateInstructionIndex !== null ? 'Edit' : 'Add'} Instruction" on:click={addInstruction} />
@@ -225,7 +288,7 @@
             {/if}
         </fieldset>
 
-        <input class="form__submit form__submit--green" value="Save Recipe" />
+        <input class="form__submit form__submit--green" value="Save Recipe" type="submit" />
     </form>
 </div>
 
