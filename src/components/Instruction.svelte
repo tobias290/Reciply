@@ -1,5 +1,5 @@
 <script>
-    import { onMount, createEventDispatcher } from "svelte";
+    import { createEventDispatcher } from "svelte";
 
     export let step;
     export let instruction;
@@ -8,13 +8,7 @@
     let dispatch = createEventDispatcher();
     let container;
 
-    onMount(() =>{
-
-    });
-
-    const toggle = () => {
-        open = !open;
-    }
+    const toggle = () => open = !open;
 </script>
 
 <div class="instruction" class:instruction--closed={!open} bind:this={container} on:click>
