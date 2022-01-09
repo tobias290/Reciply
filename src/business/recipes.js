@@ -319,5 +319,29 @@ export async function checkShoppingListRecipeIngredient(ingredientId, checked) {
 
 
 export async function saveRecipe(recipe, ingredients, instructions) {
+    // TODO: Convert recipe name to something usable
+    console.log(recipe.image.name);
+
+    return;
+
+    const { data, error } =  await supabase
+        .storage
+        .from("recipe-images")
+        .upload(recipe.image.name, recipe.image, {
+            cacheControl: '3600',
+            upsert: false
+        });
+
+    ({ data, error } = await supabase
+        .from("recipe")
+        .insert([{
+            name: recipe.title,
+            prep_time: recipe.prepTime,
+            cook_time: recipe.cookTime,
+            serves: recipe.serves,
+            image_url: "",
+            user_id: supabase.auth.user().id,
+        }]));
+
 
 }

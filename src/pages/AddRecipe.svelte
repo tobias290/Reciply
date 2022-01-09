@@ -24,7 +24,7 @@
 
     let errors = {};
 
-    const validateValue = (value) => value !== "" && value !== null && value !== undefined && !isNaN(value)
+    const validateValue = (value) => value !== "" && value !== null && value !== undefined;
 
     function onImageChange() {
         const file = image.files[0];
@@ -64,8 +64,6 @@
                 errorsOccurred = true;
             }
         }
-
-        console.log(newIngredient);
 
         if (errorsOccurred) return;
 
@@ -155,7 +153,7 @@
         let errorsOccurred = false;
 
         let recipe = {
-            title, image, prepTime, cookTime, serves
+            title, image: image.files[0], prepTime, cookTime, serves
         };
 
         for (let [key, part] of Object.entries(recipe)) {
@@ -171,11 +169,12 @@
     }
 
     async function onSaveRecipe() {
-        // Validation here...
-        if (!validate()) return;
+        if (!validate()) {
+            return;
+        }
 
         let recipe = {
-            title, image, prepTime, cookTime, serves
+            title, image: image.files[0], prepTime, cookTime, serves
         };
 
         await saveRecipe(recipe, ingredients, instructions);
@@ -201,15 +200,15 @@
 
             <fieldset class="form__set">
                 <div class="form__field">
-                    <input class="form__input" type="text" placeholder="Prep Time (mins)" bind:value={prepTime} required />
+                    <input class="form__input" type="number" min="1" placeholder="Prep Time (mins)" bind:value={prepTime} required />
                     <InputErrors errors={errors.prepTime || []} />
                 </div>
                 <div class="form__field">
-                    <input class="form__input" type="text" placeholder="Cook Time (mins)" bind:value={cookTime} required />
+                    <input class="form__input" type="number" min="1" placeholder="Cook Time (mins)" bind:value={cookTime} required />
                     <InputErrors errors={errors.cookTime || []} />
                 </div>
             </fieldset>
-            <input class="form__input" type="text" placeholder="Serves" bind:value={serves} />
+            <input class="form__input" type="number" min="1" placeholder="Serves" bind:value={serves} />
             <InputErrors errors={errors.serves || []} />
         </fieldset>
 
