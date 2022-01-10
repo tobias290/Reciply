@@ -181,7 +181,7 @@
     }
 </script>
 
-<div class="add-recipe-modal" transition:fly={{ y: document.body.clientHeight, duration: 375, opacity: 1 }} on:submit|preventDefault={onSaveRecipe}>
+<div class="add-recipe-modal" transition:fly={{ y: document.body.clientHeight, duration: 375, opacity: 1 }}>
     <form class="form form--center" on:submit|preventDefault={onSaveRecipe}>
         <input class="recipe-title-input" placeholder="Recipe Title" bind:value={title} required />
         <InputErrors errors={errors.title || []} />
