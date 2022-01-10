@@ -6,7 +6,7 @@
 
     let showImage, imagePreview;
 
-    let title, image, prepTime, cookTime, serves;
+    let title = "Test", image, prepTime = 5, cookTime = 5, serves = 5;
     let ingredients = [{name: "Olive Oil", quantity: 2, unit: "tbsp"}];
     let instructions = [
         {step: 1, instruction: "Sprinkle over the flour and cook for a further 2-3 minutes. Add the garlic and all the vegetables and fry for 1-2 minutes."},
