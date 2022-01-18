@@ -319,19 +319,23 @@ export async function checkShoppingListRecipeIngredient(ingredientId, checked) {
 
 
 export async function saveRecipe(recipe, ingredients, instructions) {
+    const sanitizeName = (name) => `${name.split(".")[0].toLowerCase()}_${Date.now()}`;
+
     let data, error;
-    const user_id = supabase.auth.user().id;
+    const userId = supabase.auth.user().id;
+    const imageName = sanitizeName(recipe.image.name);
 
-    // TODO: Convert recipe name to something usable
-
-    ({ data, error } =  await supabase.storage
+    ({ data, error } = await supabase.storage
         .from("recipe-images")
-        .upload(`${user_id}/${recipe.image.name}`, recipe.image));
+        .upload(`${userId}/${imageName}`, recipe.image));
+
+    if (error)
+        return error;
 
     const { publicURL, _ } = supabase
         .storage
         .from("recipe-images")
-        .getPublicUrl(`${user_id}/${recipe.image.name}`)
+        .getPublicUrl(`${userId}/${imageName}`);
 
     // Create recipe
     ({ data, error } = await supabase
@@ -342,13 +346,45 @@ export async function saveRecipe(recipe, ingredients, instructions) {
             cook_time: recipe.cookTime,
             serves: recipe.serves,
             image_url: publicURL,
-            user_id: user_id,
+            user_id: userId,
         }]));
 
-    // Get recipe ID
+    if (error)
+        return error;
+
+    let recipeId = data[0].id;
 
     // Upload ingredients
+    for (let [i, ingredient] of ingredients.entries()) {
+        console.log(ingredient);
+        ({ data, error } = await supabase
+            .from("ingredient")
+            .insert([{
+                name: ingredient.name,
+                quantity: ingredient.quantity,
+                order: i + 1,
+                unit: ingredient.unit,
+                details: ingredient.hasOwnProperty("details") ? ingredient.details : "",
+                recipe_id: recipeId,
+            }]));
+
+        if (error)
+            return error;
+    }
 
     // Upload instructions
+    for (let instruction of instructions) {
+        console.log(instructions);
+        ({ data, error } = await supabase
+            .from("instruction")
+            .insert([{
+                step: instruction.step,
+                instruction: instruction.instruction,
+                recipe_id: recipeId,
+            }]));
+
+        if (error)
+            return error;
+    }
 
 }

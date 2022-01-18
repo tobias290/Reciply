@@ -177,7 +177,12 @@
             title, image: image.files[0], prepTime, cookTime, serves
         };
 
-        await saveRecipe(recipe, ingredients, instructions);
+        let error = await saveRecipe(recipe, ingredients, instructions);
+
+        if (error)
+            console.log(error.message);
+        else
+            console.log("Added recipe");
     }
 </script>
 
