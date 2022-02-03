@@ -332,10 +332,12 @@ export async function saveRecipe(recipe, ingredients, instructions) {
     if (error)
         return error;
 
-    const { publicURL, _ } = supabase
+    let signedURL;
+
+    ({ signedURL, error } = await supabase
         .storage
         .from("recipe-images")
-        .getPublicUrl(`${userId}/${imageName}`);
+        .createSignedUrl(`${userId}/${imageName}`, 3.156e+9)) // Expires in 100 years
 
     // Create recipe
     ({ data, error } = await supabase
@@ -345,7 +347,7 @@ export async function saveRecipe(recipe, ingredients, instructions) {
             prep_time: recipe.prepTime,
             cook_time: recipe.cookTime,
             serves: recipe.serves,
-            image_url: publicURL,
+            image_url: signedURL,
             user_id: userId,
         }]));
 
@@ -356,7 +358,6 @@ export async function saveRecipe(recipe, ingredients, instructions) {
 
     // Upload ingredients
     for (let [i, ingredient] of ingredients.entries()) {
-        console.log(ingredient);
         ({ data, error } = await supabase
             .from("ingredient")
             .insert([{
@@ -374,7 +375,6 @@ export async function saveRecipe(recipe, ingredients, instructions) {
 
     // Upload instructions
     for (let instruction of instructions) {
-        console.log(instructions);
         ({ data, error } = await supabase
             .from("instruction")
             .insert([{
