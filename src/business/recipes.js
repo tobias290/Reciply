@@ -337,7 +337,7 @@ export async function saveRecipe(recipe, ingredients, instructions) {
     ({ signedURL, error } = await supabase
         .storage
         .from("recipe-images")
-        .createSignedUrl(`${userId}/${imageName}`, 3.156e+9)) // Expires in 100 years
+        .createSignedUrl(`${userId}/${imageName}`, 3.156e+9)); // Expires in 100 years
 
     // Create recipe
     ({ data, error } = await supabase
