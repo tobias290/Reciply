@@ -317,7 +317,15 @@ export async function checkShoppingListRecipeIngredient(ingredientId, checked) {
     return error;
 }
 
-
+/**
+ * Saves a new recipe to the database
+ *
+ * @param {object} recipe - Recipe being saves.
+ * @param {object} ingredients - Ingredients associated with the recipe.
+ * @param {object} instructions - Instructions associated with the recipe.
+ *
+ * @returns {Promise<Error|{message: string, details: string, hint: string, code: string}>}
+ */
 export async function saveRecipe(recipe, ingredients, instructions) {
     const sanitizeName = (name) => `${name.split(".")[0].toLowerCase()}_${Date.now()}`;
 
