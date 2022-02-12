@@ -26,10 +26,10 @@
         },
     ];
 
-    let active = routes[1]; // TODO: Set to 0 for production
+    let active = routes[0]; // TODO: Set to 0 for production
 
     let activeRecipe;
-    let addRecipe = true;
+    let addRecipe = false;
 
     function onTabClick(event) {
         for (let route of routes)
