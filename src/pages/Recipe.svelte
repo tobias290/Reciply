@@ -24,12 +24,19 @@
 
     const toggle = () => ingredientsPage = !ingredientsPage;
     const close = () => dispatch("close");
+    const edit = () => dispatch("edit", {recipe, ingredients, instructions});
+    const del = () => dispatch("delete");
 </script>
 
 <div class="recipe-model" transition:fly={{ y: document.body.clientHeight, duration: 375, opacity: 1 }}>
     <div class="recipe-header" style="--image: url('{recipe.image_url}')">
         <div class="recipe-header__options">
             <i class="fas fa-chevron-down" on:click={close}></i>
+
+            <div>
+                <div class="recipe-header__options-edit" on:click={edit}><i class="fas fa-edit"></i></div>
+                <div class="recipe-header__options-delete" on:click={del}><i class="fas fa-trash-alt"></i></div>
+            </div>
         </div>
         <div class="recipe-header__info">
             <h1 class="recipe-header__info-title">{recipe.name}</h1>
@@ -97,10 +104,23 @@
             @include flex($align: center, $justify: space-between);
 
             padding: .25rem;
+            width: 100%;
 
             & > .fas {
                 color: $color-white;
                 font-size: 1.5rem;
+            }
+
+            & > div {
+                @include flex($gap: 10px);
+            }
+
+            &-edit {
+                @include option($color-green, $font-size: .75rem);
+            }
+
+            &-delete {
+                @include option($color-red, $font-size: .75rem);
             }
         }
 

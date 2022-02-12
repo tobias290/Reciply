@@ -1,8 +1,17 @@
 <script>
+    import { createEventDispatcher, onMount } from "svelte";
     import { fly } from "svelte/transition";
     import { saveRecipe } from "../business/recipes";
     import Instruction from "../components/Instruction.svelte";
     import InputErrors from "../components/InputErrors.svelte";
+
+    export let recipe;
+
+    let dispatch = createEventDispatcher();
+
+    let isEditing;
+
+    $: isEditing = recipe !== null && recipe !== undefined;
 
     let showImage, imagePreview;
 
@@ -22,6 +31,23 @@
     let errors = {};
 
     const validateValue = (value) => value !== "" && value !== null && value !== undefined;
+
+    onMount(() => {
+        if (!isEditing) return;
+
+        console.log(recipe);
+
+        showImage = true
+
+        title = recipe.recipe.name;
+        image = recipe.recipe.image;
+        prepTime = recipe.recipe.prep_time;
+        cookTime = recipe.recipe.cook_time;
+        serves = recipe.recipe.serves;
+
+        ingredients = recipe.ingredients;
+        instructions = recipe.instructions;
+    });
 
     function onImageChange() {
         const file = image.files[0];
@@ -170,16 +196,21 @@
             return;
         }
 
-        let recipe = {
+        let _recipe = {
             title, image: image.files[0], prepTime, cookTime, serves
         };
 
-        let error = await saveRecipe(recipe, ingredients, instructions);
+        let error;
+
+        if (!isEditing)
+            error = await saveRecipe(_recipe, ingredients, instructions);
+        else
+            error = await editRecipe(recipe.recipe.id, _recipe, ingredients, instructions);
 
         if (error)
             console.log(error.message);
         else
-            console.log("Added recipe");
+            dispatch("success");
     }
 </script>
 
@@ -189,11 +220,17 @@
         <InputErrors errors={errors.title || []} />
 
         {#if showImage}
-            <img class="image-preview" bind:this={imagePreview} height="150" width="300" />
+            <img
+                class="image-preview"
+                bind:this={imagePreview}
+                src={isEditing ? recipe.recipe.image_url : ''}
+                height="150"
+                width="300"
+            />
         {/if}
 
         <label class="form__file">
-            <input type="file" bind:this={image} on:change={onImageChange} required />
+            <input type="file" bind:this={image} on:change={onImageChange} required={!isEditing} />
             {showImage ? "Edit" : "Add"} Image
         </label>
 
@@ -221,7 +258,7 @@
                 {#each ingredients as { name, quantity, unit }, i}
                     <div class="ingredients__ingredient" on:click={() => updateIngredient(i)}>
                         <div>
-                            <strong>{quantity > 0 ? quantity : "To Taste"} {unit}</strong>
+                            <strong>{quantity > 0 ? quantity : "To Taste"} {unit ? unit : ''}</strong>
                             <span>{name}</span>
                         </div>
                         <i class="fas fa-times" on:click|stopPropagation={() => removeIngredient(i)}></i>
@@ -288,7 +325,7 @@
             {/if}
         </fieldset>
 
-        <input class="form__submit form__submit--green" value="Save Recipe" type="submit" />
+        <input class="form__submit form__submit--green" value={isEditing ? "Edit Recipe" : "Save Recipe"} type="submit" />
     </form>
 </div>
 

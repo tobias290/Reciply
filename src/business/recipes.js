@@ -320,7 +320,7 @@ export async function checkShoppingListRecipeIngredient(ingredientId, checked) {
 /**
  * Saves a new recipe to the database
  *
- * @param {object} recipe - Recipe being saves.
+ * @param {object} recipe - Recipe being saved.
  * @param {object} ingredients - Ingredients associated with the recipe.
  * @param {object} instructions - Instructions associated with the recipe.
  *
@@ -363,6 +363,88 @@ export async function saveRecipe(recipe, ingredients, instructions) {
         return error;
 
     let recipeId = data[0].id;
+
+    // Upload ingredients
+    for (let [i, ingredient] of ingredients.entries()) {
+        ({ data, error } = await supabase
+            .from("ingredient")
+            .insert([{
+                name: ingredient.name,
+                quantity: ingredient.quantity,
+                order: i + 1,
+                unit: ingredient.unit,
+                details: ingredient.hasOwnProperty("details") ? ingredient.details : "",
+                recipe_id: recipeId,
+            }]));
+
+        if (error)
+            return error;
+    }
+
+    // Upload instructions
+    for (let instruction of instructions) {
+        ({ data, error } = await supabase
+            .from("instruction")
+            .insert([{
+                step: instruction.step,
+                instruction: instruction.instruction,
+                recipe_id: recipeId,
+            }]));
+
+        if (error)
+            return error;
+    }
+}
+
+/**
+ * Edits an existing recipe
+ *
+ * @param {int} recipeId - ID of the recipe being edited.
+ * @param {object} recipe - Recipe being edited.
+ * @param {object} ingredients - Ingredients associated with the recipe.
+ * @param {object} instructions - Instructions associated with the recipe.
+ *
+ * @returns {Promise<Error|{message: string, details: string, hint: string, code: string}>}
+ */
+export async function EditRecipe(recipeId, recipe, ingredients, instructions) {
+    // TODO: Implement
+
+    return;
+
+    const sanitizeName = (name) => `${name.split(".")[0].toLowerCase()}_${Date.now()}`;
+
+    let data, error;
+    const userId = supabase.auth.user().id;
+    const imageName = sanitizeName(recipe.image.name);
+
+    ({ data, error } = await supabase.storage
+        .from("recipe-images")
+        .upload(`${userId}/${imageName}`, recipe.image));
+
+    if (error)
+        return error;
+
+    let signedURL;
+
+    ({ signedURL, error } = await supabase
+        .storage
+        .from("recipe-images")
+        .createSignedUrl(`${userId}/${imageName}`, 3.156e+9)); // Expires in 100 years
+
+    // Create recipe
+    ({ data, error } = await supabase
+        .from("recipe")
+        .insert([{
+            name: recipe.title,
+            prep_time: recipe.prepTime,
+            cook_time: recipe.cookTime,
+            serves: recipe.serves,
+            image_url: signedURL,
+            user_id: userId,
+        }]));
+
+    if (error)
+        return error;
 
     // Upload ingredients
     for (let [i, ingredient] of ingredients.entries()) {
