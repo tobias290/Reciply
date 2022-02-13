@@ -24,7 +24,7 @@
 
     const toggle = () => ingredientsPage = !ingredientsPage;
     const close = () => dispatch("close");
-    const edit = () => dispatch("edit", {recipe, ingredients, instructions});
+    const edit = () => dispatch("edit", recipe);
     const del = () => dispatch("delete");
 </script>
 

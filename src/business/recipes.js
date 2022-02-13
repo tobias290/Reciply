@@ -403,45 +403,62 @@ export async function saveRecipe(recipe, ingredients, instructions) {
  * @param {object} recipe - Recipe being edited.
  * @param {object} ingredients - Ingredients associated with the recipe.
  * @param {object} instructions - Instructions associated with the recipe.
+ * @param {object} originalIds - Original IDs of the ingredients and instructions, so we can track what has been removed.
  *
  * @returns {Promise<Error|{message: string, details: string, hint: string, code: string}>}
  */
-export async function EditRecipe(recipeId, recipe, ingredients, instructions) {
-    // TODO: Implement
+export async function editRecipe(recipeId, recipe, ingredients, instructions, originalIds) {
+    const sanitizeName = (name) => `${name.split(".")[0].toLowerCase()}_${Date.now()}`;
 
+    /*
+    TODO:
+        * Functionality for when a new item is added to the ingredients or instructions
+            * Easy enough as you can track what has an ID or not
+        * Functionality for when a item is removed from the ingredients or instructions
+            * Use list of originalIds, compare with new list and see if anything is missing
+     */
+
+    console.log(originalIds);
     return;
 
-    const sanitizeName = (name) => `${name.split(".")[0].toLowerCase()}_${Date.now()}`;
+    let withImage = recipe.image !== null;
 
     let data, error;
     const userId = supabase.auth.user().id;
-    const imageName = sanitizeName(recipe.image.name);
 
-    ({ data, error } = await supabase.storage
-        .from("recipe-images")
-        .upload(`${userId}/${imageName}`, recipe.image));
+    let updatedRecipe = {
+        name: recipe.title,
+        prep_time: recipe.prepTime,
+        cook_time: recipe.cookTime,
+        serves: recipe.serves,
+        user_id: userId,
+    };
 
-    if (error)
-        return error;
+    if (withImage) {
+        const imageName = sanitizeName(recipe.image.name);
 
-    let signedURL;
+        ({data, error} = await supabase.storage
+            .from("recipe-images")
+            .upload(`${userId}/${imageName}`, recipe.image));
 
-    ({ signedURL, error } = await supabase
-        .storage
-        .from("recipe-images")
-        .createSignedUrl(`${userId}/${imageName}`, 3.156e+9)); // Expires in 100 years
+        if (error)
+            return error;
+
+        let signedURL;
+
+        ({signedURL, error} = await supabase
+            .storage
+            .from("recipe-images")
+            .createSignedUrl(`${userId}/${imageName}`, 3.156e+9)); // Expires in 100 years
+
+        updatedRecipe.image_url = signedURL;
+    }
 
     // Create recipe
     ({ data, error } = await supabase
         .from("recipe")
-        .insert([{
-            name: recipe.title,
-            prep_time: recipe.prepTime,
-            cook_time: recipe.cookTime,
-            serves: recipe.serves,
-            image_url: signedURL,
-            user_id: userId,
-        }]));
+        .update(updatedRecipe)
+        .match({id: recipeId}));
 
     if (error)
         return error;
@@ -450,14 +467,15 @@ export async function EditRecipe(recipeId, recipe, ingredients, instructions) {
     for (let [i, ingredient] of ingredients.entries()) {
         ({ data, error } = await supabase
             .from("ingredient")
-            .insert([{
+            .update({
                 name: ingredient.name,
                 quantity: ingredient.quantity,
                 order: i + 1,
                 unit: ingredient.unit,
                 details: ingredient.hasOwnProperty("details") ? ingredient.details : "",
                 recipe_id: recipeId,
-            }]));
+            })
+            .match({id: ingredient.id}));
 
         if (error)
             return error;
@@ -467,14 +485,14 @@ export async function EditRecipe(recipeId, recipe, ingredients, instructions) {
     for (let instruction of instructions) {
         ({ data, error } = await supabase
             .from("instruction")
-            .insert([{
+            .insert({
                 step: instruction.step,
                 instruction: instruction.instruction,
                 recipe_id: recipeId,
-            }]));
+            })
+            .match({id: instruction.id}))
 
         if (error)
             return error;
     }
-
 }

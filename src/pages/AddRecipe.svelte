@@ -1,7 +1,7 @@
 <script>
     import { createEventDispatcher, onMount } from "svelte";
     import { fly } from "svelte/transition";
-    import { saveRecipe } from "../business/recipes";
+    import { saveRecipe, editRecipe, getRecipeIngredients, getRecipeInstructions } from "../business/recipes";
     import Instruction from "../components/Instruction.svelte";
     import InputErrors from "../components/InputErrors.svelte";
 
@@ -18,6 +18,7 @@
     let title, image, prepTime, cookTime, serves;
     let ingredients = [];
     let instructions = [];
+    let originalIds = {ingredients: [], instructions: []};
 
     let name, quantity, unit, details;
     let instruction;
@@ -32,23 +33,34 @@
 
     const validateValue = (value) => value !== "" && value !== null && value !== undefined;
 
-    onMount(() => {
+    onMount(async () => {
         if (!isEditing) return;
 
-        console.log(recipe);
+        // If we are edit mode, populate the fields with the existing data
+
+        let error;
 
         showImage = true
 
-        title = recipe.recipe.name;
-        image = recipe.recipe.image;
-        prepTime = recipe.recipe.prep_time;
-        cookTime = recipe.recipe.cook_time;
-        serves = recipe.recipe.serves;
+        title = recipe.name;
+        prepTime = recipe.prep_time;
+        cookTime = recipe.cook_time;
+        serves = recipe.serves;
 
-        ingredients = recipe.ingredients;
-        instructions = recipe.instructions;
+        ({ingredients, error} = await getRecipeIngredients(recipe.id));
+        ({instructions, error} = await getRecipeInstructions(recipe.id));
+
+        if (error)
+            console.error(error.message);
+
+        // Save the original IDs so that we can track anything that has been removed
+        originalIds.ingredients = ingredients.map(i => i.id);
+        originalIds.instructions = instructions.map(i => i.id);
     });
 
+    /**
+     * When an image is changed update the preview and whether an image is being displayed or not.
+     */
     function onImageChange() {
         const file = image.files[0];
 
@@ -81,6 +93,7 @@
 
         let errorsOccurred = false;
 
+        // Validate to make sure there are no empty fields
         for (let [key, part] of Object.entries({name, quantity: parseInt(quantity) })) {
             if (!validateValue(part))  {
                 errors[key] = ["Cannot be empty"];
@@ -90,6 +103,7 @@
 
         if (errorsOccurred) return;
 
+        // Either add the new ingredient or update if we are editing an existing one
         if (updateIngredientIndex === null) {
             ingredients.push(newIngredient);
         } else {
@@ -97,8 +111,10 @@
             updateIngredientIndex = null;
         }
 
+        // Update the list so the UI changes
         ingredients = ingredients;
 
+        // Reset the fields for a new ingredient
         name = null;
         quantity  = null;
         unit  = null;
@@ -107,6 +123,11 @@
         showIngredientForm = false;
     }
 
+    /**
+     * Populate the ingredient field so an existing one can be updated.
+     *
+     * @param {int} i - Index of the ingredient to update.
+     */
     function updateIngredient(i) {
         updateIngredientIndex = i;
 
@@ -125,16 +146,19 @@
     }
 
     function addInstruction() {
+        // Show the sub-form then exit so that we don't validate until its submitted
         if (!showInstructionForm) {
             showInstructionForm = true;
             return;
         }
 
+        // Make sure the instruction is valid
         if (!validateValue(instruction)) {
             errors.instruction = ["Cannot be empty"];
             return;
         }
 
+        // Either add the new ingredient or update if we are editing an existing one
         if (updateIngredientIndex !== null) {
             instructions[updateInstructionIndex].instruction = instruction;
             updateInstructionIndex = null;
@@ -145,13 +169,20 @@
             });
         }
 
+        // Update the list so the UI changes
         instructions = instructions;
 
+        // Reset the fields for a new ingredient
         instruction = null;
 
         showInstructionForm = false;
     }
 
+    /**
+     * Populate the instruction field so an existing one can be updated.
+     *
+     * @param {int} i - Index of the instruction to update.
+     */
     function updateInstruction(i) {
         updateInstructionIndex = i;
 
@@ -172,13 +203,22 @@
         showInstructionForm = false;
     }
 
+    /**
+     * Valid the whole form before creating/editing the recipe.
+     *
+     * @returns {boolean} - True if the form is valid, false if not.
+     */
     function validate() {
         let errorsOccurred = false;
 
         let recipe = {
-            title, image: image.files[0], prepTime, cookTime, serves
+            title, prepTime, cookTime, serves
         };
 
+        if (!isEditing)
+            recipe.image = image.files[0];
+
+        // Validate each part of the recipe
         for (let [key, part] of Object.entries(recipe)) {
             if (!validateValue(part))  {
                 errors[key] = ["Cannot be empty"];
@@ -191,21 +231,25 @@
         return !errorsOccurred;
     }
 
+    /**
+     * Save the recipe to the database.
+     */
     async function onSaveRecipe() {
         if (!validate()) {
             return;
         }
 
         let _recipe = {
-            title, image: image.files[0], prepTime, cookTime, serves
+            title, image: image.files.length !== 0 ? image.files[0] : null, prepTime, cookTime, serves
         };
 
         let error;
 
+        // Either save or edit
         if (!isEditing)
             error = await saveRecipe(_recipe, ingredients, instructions);
         else
-            error = await editRecipe(recipe.recipe.id, _recipe, ingredients, instructions);
+            error = await editRecipe(recipe.id, _recipe, ingredients, instructions, originalIds);
 
         if (error)
             console.log(error.message);
@@ -223,7 +267,7 @@
             <img
                 class="image-preview"
                 bind:this={imagePreview}
-                src={isEditing ? recipe.recipe.image_url : ''}
+                src={isEditing ? recipe.image_url : ''}
                 height="150"
                 width="300"
             />
