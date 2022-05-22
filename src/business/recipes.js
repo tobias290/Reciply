@@ -498,8 +498,22 @@ export async function editRecipe(recipeId, recipe, ingredients, instructions, or
             return error;
     }
 
-    // Upload instructions
-    for (let instruction of instructions) {
+    // Update instructions
+    for (let instruction of instructions.filter(i => i.hasOwnProperty("id"))) {
+        ({ data, error } = await supabase
+            .from("instruction")
+            .update({
+                instruction: instruction.instruction,
+                recipe_id: recipeId,
+            })
+            .match({id: instruction.id}));
+
+        if (error)
+            return error;
+    }
+
+    // Upload new instructions
+    for (let instruction of instructions.filter(i => !i.hasOwnProperty("id"))) {
         ({ data, error } = await supabase
             .from("instruction")
             .insert({

@@ -164,7 +164,7 @@
         }
 
         // Either add the new ingredient or update if we are editing an existing one
-        if (updateIngredientIndex === null) {
+        if (updateInstructionIndex === null) {
             instructions.push({
                 step: instructions.length + 1,
                 instruction,
