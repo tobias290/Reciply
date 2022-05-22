@@ -24,7 +24,7 @@
     @import "../css/bootstrap";
 
     .instruction {
-        @include flex($align: center, $direction: column);
+        @include flex($align: flex-start, $direction: column);
 
         background: $color-white-dark;
         border-radius: 8px;

@@ -412,14 +412,8 @@ export async function editRecipe(recipeId, recipe, ingredients, instructions, or
 
     /*
     TODO:
-        * Functionality for when a new item is added to the ingredients or instructions
-            * Easy enough as you can track what has an ID or not
-        * Functionality for when a item is removed from the ingredients or instructions
-            * Use list of originalIds, compare with new list and see if anything is missing
+        * Update step order when removing instructions
      */
-
-    console.log(ingredients);
-    //return;
 
     let withImage = recipe.image !== null;
 
@@ -498,6 +492,21 @@ export async function editRecipe(recipeId, recipe, ingredients, instructions, or
             return error;
     }
 
+    let currentIngredientIds = ingredients.filter(i => i.hasOwnProperty("id")).map(i => i.id);
+
+    // Delete ingredients
+    for (let id of originalIds.ingredients) {
+        if (!currentIngredientIds.includes(id)) {
+            ({ data, error } = await supabase
+                .from("ingredient")
+                .delete()
+                .match({id: id}));
+
+            if (error)
+                return error;
+        }
+    }
+
     // Update instructions
     for (let instruction of instructions.filter(i => i.hasOwnProperty("id"))) {
         ({ data, error } = await supabase
@@ -525,5 +534,20 @@ export async function editRecipe(recipeId, recipe, ingredients, instructions, or
 
         if (error)
             return error;
+    }
+
+    let currentInstructionIds = instructions.filter(i => i.hasOwnProperty("id")).map(i => i.id);
+
+    // Delete instructions
+    for (let id of originalIds.instructions) {
+        if (!currentInstructionIds.includes(id)) {
+            ({ data, error } = await supabase
+                .from("instruction")
+                .delete()
+                .match({id: id}));
+
+            if (error)
+                return error;
+        }
     }
 }
