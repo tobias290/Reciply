@@ -418,8 +418,8 @@ export async function editRecipe(recipeId, recipe, ingredients, instructions, or
             * Use list of originalIds, compare with new list and see if anything is missing
      */
 
-    console.log(originalIds);
-    return;
+    console.log(ingredients);
+    //return;
 
     let withImage = recipe.image !== null;
 
@@ -463,8 +463,8 @@ export async function editRecipe(recipeId, recipe, ingredients, instructions, or
     if (error)
         return error;
 
-    // Upload ingredients
-    for (let [i, ingredient] of ingredients.entries()) {
+    // Update existing ingredients
+    for (let [i, ingredient] of ingredients.filter(i => i.hasOwnProperty("id")).entries()) {
         ({ data, error } = await supabase
             .from("ingredient")
             .update({
@@ -472,10 +472,27 @@ export async function editRecipe(recipeId, recipe, ingredients, instructions, or
                 quantity: ingredient.quantity,
                 order: i + 1,
                 unit: ingredient.unit,
-                details: ingredient.hasOwnProperty("details") ? ingredient.details : "",
+                details: ingredient.hasOwnProperty("details") && ingredient.details !== undefined ? ingredient.details : "",
                 recipe_id: recipeId,
             })
             .match({id: ingredient.id}));
+
+        if (error)
+            return error;
+    }
+
+    // Upload new ingredients
+    for (let [i, ingredient] of ingredients.filter(i => !i.hasOwnProperty("id")).entries()) {
+        ({ data, error } = await supabase
+            .from("ingredient")
+            .insert([{
+                name: ingredient.name,
+                quantity: ingredient.quantity,
+                order: i + 1,
+                unit: ingredient.unit,
+                details: ingredient.hasOwnProperty("details") && ingredient.details !== undefined ? ingredient.details : "",
+                recipe_id: recipeId,
+            }]));
 
         if (error)
             return error;

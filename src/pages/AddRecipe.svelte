@@ -20,7 +20,7 @@
     let instructions = [];
     let originalIds = {ingredients: [], instructions: []};
 
-    let name, quantity, unit, details;
+    let ingredientId, name, quantity, unit, details;
     let instruction;
 
     let updateIngredientIndex = null;
@@ -91,6 +91,9 @@
             name, quantity: parseInt(quantity), unit: unit ? unit.toLowerCase() : "", details,
         };
 
+        if (ingredientId !== undefined && ingredientId !== null)
+            newIngredient.id = ingredientId;
+
         let errorsOccurred = false;
 
         // Validate to make sure there are no empty fields
@@ -115,6 +118,7 @@
         ingredients = ingredients;
 
         // Reset the fields for a new ingredient
+        ingredientId = null;
         name = null;
         quantity  = null;
         unit  = null;
@@ -131,6 +135,7 @@
     function updateIngredient(i) {
         updateIngredientIndex = i;
 
+        ingredientId = ingredients[i].id;
         name = ingredients[i].name;
         quantity  = ingredients[i].quantity;
         unit  = ingredients[i].unit;
@@ -159,14 +164,14 @@
         }
 
         // Either add the new ingredient or update if we are editing an existing one
-        if (updateIngredientIndex !== null) {
-            instructions[updateInstructionIndex].instruction = instruction;
-            updateInstructionIndex = null;
-        } else {
+        if (updateIngredientIndex === null) {
             instructions.push({
                 step: instructions.length + 1,
                 instruction,
             });
+        } else {
+            instructions[updateInstructionIndex].instruction = instruction;
+            updateInstructionIndex = null;
         }
 
         // Update the list so the UI changes
